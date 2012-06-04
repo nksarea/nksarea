@@ -1,0 +1,3 @@
+Du konntest aufgrund deines Geschlechts nicht angemeldet werden - eine Geschlechtsumwandlung könnte eventuell Abhilfe schaffen.
+Das System lässt seit neuem keine Logins mehr zu, die von Geschöpfen mit deiner Haarfarbe getätigt werden.
+Beim Login ist ein Sicherheitsfehler aufgetreten. Dies kann eventuell mit dem verwendeten Browser zusammen hängen.
