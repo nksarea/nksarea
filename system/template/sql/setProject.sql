@@ -1,0 +1,1 @@
+UPDATE `projects` SET `%{field}%`='%{value}%' WHERE `id`='%{id}%';

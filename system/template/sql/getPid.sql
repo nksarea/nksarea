@@ -1,0 +1,1 @@
+SELECT `id` FROM `projects` WHERE %[filter,`$key` = '$value', AND ]% AND (`owner` = '%{user}%' OR NOT (`access_level` =  0 OR (`access_level` <= 2 AND %{class}% != (SELECT `class` FROM `users` WHERE `id` = `owner`)) OR (`access_level` = 1 AND %{userAL}% = 1))) ORDER BY %{order}% %{desc}%;

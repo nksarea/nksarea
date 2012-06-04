@@ -1,0 +1,1 @@
+INSERT INTO `projects` (`owner`, `name`, `description`, `access_level`, `list`, `upload_time`) VALUES ('%{owner}%', '%{name}%', '%{description}%', '%{access_level}%', '%{list}%', NOW());

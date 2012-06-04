@@ -1,0 +1,1 @@
+%|winRAR.cmd,y -inull "%{path}%"|%
