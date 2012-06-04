@@ -12,3 +12,5 @@ function getRAR($connectionClass = 'command')
 
 	return $rar;
 }
+
+?>
