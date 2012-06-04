@@ -16,7 +16,7 @@ define('SYS_TMP', 'system/tmp');
 define('SYS_TEMP_FOLDER', SYS_TMP);
 
 /** Pfad zum Projekt-Ordner														*/
-define('SYS_SHARE_PROJECTS', 'system/projects');
+define('SYS_SHARE_PROJECTS', 'data/projects');
 
 /** E-Mail Adresse, von der die Einladungen kommen								*/
 define('SYS_NOREPLY', 'noreply@null.cedl.ch');
@@ -62,3 +62,6 @@ define('SYS_CLASSNAME_MAXLENGTH', 6);
 
 /** Maximallänge für Übernamen der Klassen										*/
 define('SYS_CLASSNICK_MAXLENGTH', 24);
+
+/**	Bei true werden Fehler mit trigger_error() ausgegeben						*/
+define('TEST_MODE', true);

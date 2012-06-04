@@ -69,7 +69,7 @@ class file extends base
 		
 		if(!is_string($name))
 			$this->throwError ('$name isn`t a string', $name);
-		if(!is_file(SYS_UPLOAD_FOLDER . $file))
+		if(!is_file(SYS_TMP . $file))
 			$this->throwError ('$file isn`t a file', $file);
 
 		$query['name'] = $name;
@@ -80,7 +80,7 @@ class file extends base
 		if (getDB()->query('addProject', $query))
 			$this->throwError('MYSQLi hates you!');
 
-		return getRAR()->execute('moveFile', array('source' => SYS_UPLOAD_FOLDER . $file, 'destination' => SYS_PROJECT_FOLDER . getDB()->insert_id));
+		return getRAR()->execute('moveFile', array('source' => SYS_TMP . $file, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id));
 	}
 	function removeFile()
 	{

@@ -69,31 +69,31 @@ class project extends base
 
 	public function viewContent()
 	{
-		if (!is_file(SYS_PROJECT_FOLDER . $this->pid . '.rar'))
+		if (!is_file(SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('there is no RAR data for the project');
 
-		getRAR()->execute('viewContent', array('path' => SYS_PROJECT_FOLDER . $this->pid . '.rar'));
+		getRAR()->execute('viewContent', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar'));
 		return getRAR()->plugin('rar_parseContent');
 	}
 
 	public function prepareDownload($mask = false)
 	{
-		if (!is_file(SYS_PROJECT_FOLDER . $this->pid . '.rar'))
+		if (!is_file(SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('there is no RAR data for the project');
 		if (!is_string($mask) && !is_bool($mask))
 			$this->throwError('$filter is not a bool nor a string');
 
 		if ($mask == false)
 		{
-			return array('path' => SYS_PROJECT_FOLDER . $this->pid . '.rar', 'name' => $this->data->name);
+			return array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'name' => $this->data->name);
 		}
 		else
 		{
-			$path = SYS_DOWNLOAD_FOLDER . uniqid();
+			$path = SYS_TMP . uniqid();
 			$name = explode('\\', $mask);
 			$name = $name[count($name) - 1];
 
-			var_dump(getRAR()->execute('prepareDownload', array('path' => SYS_PROJECT_FOLDER . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path)));
+			var_dump(getRAR()->execute('prepareDownload', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path)));
 			return array('path' => $path, 'name' => $name);
 		}
 	}
@@ -165,7 +165,7 @@ class project extends base
 		$access_level = intval($access_level);
 		$query = array();
 
-		if (!is_dir(SYS_UPLOAD_FOLDER . $folder))
+		if (!is_dir(SYS_TMP . $folder))
 			$this->throwError('$folder isn`t a folder');
 		if (!is_string($name))
 			$this->throwError('$name isn`t a string');
@@ -186,7 +186,7 @@ class project extends base
 		if (!$result)
 			$this->throwError('MYSQLi hates you!');
 
-		return getRAR()->execute('packProject', array('source' => SYS_UPLOAD_FOLDER . $folder, 'destination' => SYS_PROJECT_FOLDER . getDB()->insert_id . '.rar'));
+		return getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id . '.rar'));
 	}
 
 }

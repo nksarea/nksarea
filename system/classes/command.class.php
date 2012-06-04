@@ -58,7 +58,7 @@ class command extends base
 
 	public function execute($template, $input, $asynchron = false)
 	{
-		$path = SYS_TEMP_FOLDER . uniqid();
+		$path = SYS_TMP . uniqid();
 		if (!mkdir($path))
 			$this->throwError("Couldn`t create directory", $path);
 
