@@ -14,13 +14,13 @@ class project extends base
 
 	public function __construct($user, $pid)
 	{
-//		if (get_class($user) != 'User')
-//			return $this->throwError('$user was not an instance of "User"');
-
 		$this->user = $user;
 		$this->pid = $pid;
 
-		$this->refreshData();
+		$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
+		if($this->data->dataLength === null)
+			$this->throwError('No project with given pid exists', $this->pid);
+		$this->data = $this->data->dataObj;
 
 		$fail = (($this->data->access_level == 0) ||
 				($this->data->access_level == 1 && $this->user->access_level == 1) ||
@@ -35,14 +35,14 @@ class project extends base
 	{
 		switch ($name)
 		{
-			case 'data':
-			case 'type':
-			case 'permitted':
+			case 'pid':
 				return $this->$name;
 				break;
 			case 'owner':
 			case 'name':
 			case 'description':
+			case 'access_level':
+			case 'upload_time':
 			case 'list':
 				return $this->data->$name;
 				break;
@@ -51,16 +51,22 @@ class project extends base
 
 	public function __set($name, $value)
 	{
+		if($user->data->id != $this->data->owner)
+			return;
+		
 		switch ($name)
 		{
-			case 'id':
-			case 'owner':
 			case 'name':
 			case 'description':
 			case 'access_level':
 			case 'list':
 				getDB()->query('setProject', array('id' => $this->pid, 'field' => $name, 'value' => $value));
 				$this->$name = $value;
+				break;
+			case 'owner':
+				getDB()->query('setProject', array('id' => $this->pid, 'field' => $name, 'value' => $value));
+				$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
+				$this->data = $this->data->dataObj;
 				break;
 			default:
 				return;
@@ -148,16 +154,6 @@ class project extends base
 		while ($query->next());
 
 		return $result;
-	}
-
-	protected function refreshData()
-	{
-		$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
-		if($this->data->dataLength === null)
-			$this->throwError('No project with given pid exists', $this->pid);
-		
-		$this->data = $this->data->dataObj;
-		$this->data->class = getDB()->query('refreshClass', array('owner' => $this->data->owner));
 	}
 
 	public static function addProject($user, $folder, $name, $access_level, $description = NULL, $list = NULL)

@@ -13,6 +13,8 @@ class file extends base
 		$this->fid = $fid;
 
 		$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
+		if($this->data->dataLength === null)
+			$this->throwError('No file with given fid exists', $this->fid);
 		$this->data = $this->data->dataObj;
 
 		$ok = $user->data->id == $this->data->list_owner || $user->data->id == $this->data->owner;
@@ -40,7 +42,7 @@ class file extends base
 
 	public function __set($name, $value)
 	{
-		if(!$user->data->id == $this->data->owner)
+		if($user->data->id != $this->data->owner)
 			return;
 
 		switch ($name)
