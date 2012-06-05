@@ -1,6 +1,6 @@
 <?php
 
-class rar extends base implements plugin
+class rar extends base implements Plugin
 {
 
 	public $methods = array('parseContent');
