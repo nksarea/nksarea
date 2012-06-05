@@ -1,7 +1,6 @@
 <?php
 class command extends base
 {
-
 	private $output;
 	private $plugins = array();
 	private $pluginMethods = array();
@@ -57,7 +56,8 @@ class command extends base
 
 		if ($asynchron === true)
 		{
-			exec('start ' . $path . '/command.bat');
+//			exec('start /B "bla" ' . $path . '/command.bat');
+			pclose(popen('start "bla" "' . $path . '/command.bat"', "r"));
 			return $path . '/output.txt';
 		}
 		exec($path . '/command.bat', $this->output);
