@@ -56,8 +56,7 @@ class command extends base
 
 		if ($asynchron === true)
 		{
-//			exec('start /B "bla" ' . $path . '/command.bat');
-			pclose(popen('start "bla" "' . $path . '/command.bat"', "r"));
+			pclose(popen('start "asy" "' . $path . '/command.bat"', "r"));
 			return $path . '/output.txt';
 		}
 		exec($path . '/command.bat', $this->output);
