@@ -7,8 +7,6 @@ class dbcResult extends base
 	private $dataArray = array('dataObject' => NULL, 'dataArray' => NULL, 'dataAssoc' => NULL, 'dataRow' => NULL);
 	private $dataLength = 0;
 	private $pointer = 0;
-	public $error;
-	public $warning;
 
 	/**
 	 * Das gleiche wie mysqli::__construct(), bei Erfolg der verbindung wird this::connected auf true gesetzt.

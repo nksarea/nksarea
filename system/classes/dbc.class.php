@@ -2,8 +2,6 @@
 
 class dbc extends mysqli
 {
-	private $input;
-	private $template;
 	private $connected = false;
 	public $errorblo;
 	public $warning;
@@ -18,23 +16,6 @@ class dbc extends mysqli
 			$this->connected = true;
 		else
 			$this->throwWarning('mysqli couldn`t connect');
-	}
-
-	/**
-	 * Als Alternative zu query($input, $template) können this::input und this::template gesetzt werden.
-	 *
-	 * @param string $name
-	 * @param string $value
-	 */
-	public function __set($name, $value)
-	{
-		switch ($name)
-		{
-			case 'input':
-			case 'template':
-				$this->$name = $value;
-				break;
-		}
 	}
 
 	/**
@@ -116,28 +97,27 @@ class dbc extends mysqli
 	/**
 	 * Fehlerbehandlung
 	 */
-	public function throwError($text)
+	public function throwError($text, $var = NULL)
 	{
 		if (!is_string($text))
-			$this->errorblo = 'Error text wasn\'t a string! I mean what the fuck? Are you so dumb or just retardet? This is the worst error ever!!!!';
-		else
-			$this->errorblo = $text;
+			$text = 'Error text wasn\'t a string!';
+		if ($var != NULL)
+			var_dump($var);
 
-		if (TEST_MODE === true)
-			trigger_error($this->errorblo);
-
-		return false;
+		trigger_error($text);
+		exit;
 	}
 
 	public function throwWarning($text)
 	{
-		if (!is_string($text))
-			$this->warning[] = 'Warning text wasn\'t a string';
-		else
-			$this->warning[] = $text;
+		if (!isset($GLOBALS['warning']))
+			$this->throwError('Not using base.class properly');
 
-		if (TEST_MODE === true)
-			trigger_warning($this->warning[count($this->warning) - 1]);
+		if (!is_string($text))
+			$this->throwError('Warning text wasn\'t a string', $text);
+		else
+			$GLOBALS['warning'][] = $text;
+		return false;
 	}
 
 }
