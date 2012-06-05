@@ -9,21 +9,16 @@ class file extends base
 
 	public function __construct($user, $fid)
 	{
-//		if (get_class($user) != 'User')
-//			return $this->throwError('$user was not an instance of "User"');
-
 		$this->user = $user;
 		$this->fid = $fid;
 
 		$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
 		$this->data = $this->data->dataObj;
 
-		$ok = $user->data->class == $this->data->class
-				|| $user->access_level === 0
-				|| $user->data->id == $this->data->owner;
+		$ok = $user->data->id == $this->data->list_owner || $user->data->id == $this->data->owner;
 
-		if ($ok)
-			return $this->throwError('$user has no access to the project');;
+		if (!$ok)
+			$this->throwError('$user has no access to the project');;
 	}
 
 	public function __get($name)
@@ -38,7 +33,6 @@ class file extends base
 			case 'upload_time':
 			case 'list':
 			case 'mime':
-			case 'class':
 				return $this->data->$name;
 				break;
 		}
@@ -46,9 +40,11 @@ class file extends base
 
 	public function __set($name, $value)
 	{
+		if(!$user->data->id == $this->data->owner)
+			return;
+
 		switch ($name)
 		{
-			case 'owner':
 			case 'name':
 			case 'mime':
 				getDB()->query('setFile', array('id' => $this->fid, 'field' => $name, 'value' => $value));
@@ -58,6 +54,11 @@ class file extends base
 				getDB()->query('setFile', array('id' => $this->fid, 'field' => $name, 'value' => $value));
 				$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
 				$this->data = $this->data->dataObj;
+				break;
+			case 'file':
+				if(!is_file(SYS_TMP . $file))
+					$this->throwError ('$value isn`t a file', $value);
+				getRAR()->execute('moveFile', array('source' => SYS_TMP . $value, 'destination' => SYS_SHARE_PROJECTS . $this->fid));
 				break;
 			default:
 				return;

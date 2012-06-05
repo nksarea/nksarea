@@ -8,7 +8,7 @@ include_once 'system/functions/getMethods.fn.php';
 
 $warning = array();
 
-var_dump(getRAR()->execute('viewContent', array('path' => SYS_SHARE_PROJECTS . '15.rar'), true));
+var_dump(getDB()->query('refreshDataF', array('fid' => 1))->dataObj);
 
 var_dump($warning);
 ?>
