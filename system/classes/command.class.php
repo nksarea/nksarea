@@ -74,7 +74,7 @@ class command extends base
 
 		if ($asynchron === true)
 		{
-			exec('start cmd.exe ' . $path . '/command.bat');
+			exec('start ' . $path . '/command.bat');
 			return $path . '/output.txt';
 		}
 		exec($path . '/command.bat', $this->output);

@@ -8,6 +8,9 @@ include_once 'system/functions/getDB.fn.php';
 include_once 'system/functions/getUser.fn.php';
 include_once 'system/functions/getMethods.fn.php';
 
+//warnungs Variable inizialisieren
+$warning = array();
+
 // Template inizialisieren
 $template = new LanguageTemplate(SYS_UI_TMPL_DIR);
 
