@@ -1,6 +1,0 @@
-%{Temporäres Login Formular}%
-<form action="./" method="post">
-	<p><b>Benutzername:</b><input type="text" name="user"/></p>
-	<p><b>Passwort:</b><input type="password" name="pass"/></p>
-	<p><input type="submit" value="Login" name="login"/></p>
-</form>
