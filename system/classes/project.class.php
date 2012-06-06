@@ -8,6 +8,7 @@ define('ORDER_UPTIME', 4);
 class project extends base
 {
 	private $data;
+	private $versions;
 	private $pid;
 
 	public function __construct($pid)
@@ -37,6 +38,7 @@ class project extends base
 				break;
 			case 'owner':
 			case 'name':
+			case 'version':
 			case 'description':
 			case 'access_level':
 			case 'upload_time':
@@ -96,7 +98,7 @@ class project extends base
 			$name = explode('\\', $mask);
 			$name = $name[count($name) - 1];
 
-			var_dump(getRAR()->execute('prepareDownload', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path)));
+			getRAR()->execute('prepareDownload', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path));
 			return array('path' => $path, 'name' => $name);
 		}
 	}
@@ -104,5 +106,49 @@ class project extends base
 	public function removeProject()
 	{
 		//@todo
+	}
+	public function setVersion($version, $folder = false)
+	{
+		$versionFile = SYS_SHARE_PROJECTS . $this->pid . '-v' . $version;
+	
+		if(!is_file($versionFile) && ($folder === false || !is_file(SYS_TMP . $folder)))
+			$this->throwError ('$version isn`t currently present');	
+		if(rename(SYS_SHARE_PROJECTS . $pid . '.rar', SYS_SHARE_PROJECTS . $pid . '-v' . $this->data->version))
+			$this->throwError ('couldn`t rename file');
+		
+		if(!is_file($versionFile))
+		{
+			getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => $versionFile));
+			$this->versions[] = $version;
+//			Sorting array ->
+		}
+		
+		$this->data->version = $version;
+		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'version', 'value' => $version));
+
+		if(rename($versionFile, SYS_SHARE_PROJECTS . $pid . '.rar'))
+			$this->throwError ('couldn`t rename file');
+		return true;
+	}
+	
+	public function getVersions()
+	{
+		if(is_array($this->versions))
+			return $this->versions;
+
+		$this->versions = array($this->data->version);
+		
+		$dir = opendir(SYS_SHARE_PROJECTS);
+		while (($file = readdir($dir)) !== false)
+		{
+			if(strpos($file, $this->pid . '-v') !== 0)
+				continue;
+			
+			$this->versions[] = str_replace($this->pid . '-v', '', $file);
+		}
+		closedir($dir);
+		
+//		Sorting array ->
+		return $this->versions;
 	}
 }
