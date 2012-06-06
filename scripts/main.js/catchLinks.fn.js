@@ -1,5 +1,7 @@
 /*
  * Fängt Links und ersetzt Ladevorgang der neuen Seite, falls interner Link
+ *
+ * @author Cédric Neukom
  */
 function catchLinks(e) {
 	if(!window.XMLHttpRequest)

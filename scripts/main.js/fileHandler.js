@@ -1,3 +1,8 @@
+/*
+ * Stellt Funktionalität für Drag'n'Drop Dateiupload zur Verfügung
+ *
+ * @author Cédric Neukom
+ */
 var uploadContainer;
 
 /*

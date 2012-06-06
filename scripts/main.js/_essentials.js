@@ -1,4 +1,10 @@
 /*
+ * Kernkomponenten.
+ *
+ * @author Cédric Neukom
+ */
+
+/*
  * Enthält Initialisierungsfunktionen
  */
 var INITS = [];

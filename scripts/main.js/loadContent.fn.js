@@ -1,4 +1,11 @@
 /*
+ * Inhaltsmanagement: Funktionen für asynchrones Laden von Inhalten und in-auftrag-
+ * geben von Jobs.
+ *
+ * @author Cédric Neukom
+ */
+
+/*
  * Lädt Inhalt nach.
  *
  * @param e Pfad, HTMLElement oder Event
