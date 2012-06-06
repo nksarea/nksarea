@@ -8,11 +8,7 @@ include_once 'system/functions/getMethods.fn.php';
 
 $warning = array();
 
-$user->id = 3;
-$user->access_level = 0;
-$user->class = 40;
-
-getRAR()->execute('viewContent', array('path' => SYS_SHARE_PROJECTS . '15.rar'));
+var_dump(getRAR()->execute('viewContent', array('path' => SYS_SHARE_PROJECTS . '15.rar'), true));
 
 var_dump($warning);
 ?>

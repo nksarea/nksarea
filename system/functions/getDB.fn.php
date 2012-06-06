@@ -9,13 +9,14 @@
  * @param string $driverClass Die zu verwendende Datenbankklasse
  * @return object Diese Funktion gibt eine Referenz auf das Datenbankobjekt zurück.
  * @author Cédric Neukom
+ * @todo create local db
  */
 function getDB($driverClass = 'dbc') {
 	/** Datenbankobjekt */
 	static $dbc;
 
 	if(!is_object($dbc) || ($dbc instanceof $driverClass && !$dbc->connected)) {
-		$dbc = new $driverClass('localhost', 'root', 'abc', 'nksarea');
+		$dbc = new $driverClass('localhost', 'nksarea', 'abc', 'nksarea');
 		if($dbc->connect_errno)
 			//Da kein Objekt (und somit nicht von der Basis Klasse erweitert), einfache Behandlung
 			throw new Exception($dbc->connect_error, $dbc->connect_errno);
