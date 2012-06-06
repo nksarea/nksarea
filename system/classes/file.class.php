@@ -2,14 +2,11 @@
 
 class file extends base
 {
-
-	private $user;
 	private $data;
 	private $fid;
 
-	public function __construct($user, $fid)
+	public function __construct($fid)
 	{
-		$this->user = $user;
 		$this->fid = $fid;
 
 		$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
@@ -17,7 +14,7 @@ class file extends base
 			$this->throwError('No file with given fid exists', $this->fid);
 		$this->data = $this->data->dataObj;
 
-		$ok = $user->data->id == $this->data->list_owner || $user->data->id == $this->data->owner;
+		$ok = getUser()->data->id == $this->data->list_owner || getUser()->data->id == $this->data->owner;
 
 		if (!$ok)
 			$this->throwError('$user has no access to the project');;
@@ -42,7 +39,7 @@ class file extends base
 
 	public function __set($name, $value)
 	{
-		if($user->data->id != $this->data->owner)
+		if(getUser()->data->id != $this->data->owner)
 			return;
 
 		switch ($name)

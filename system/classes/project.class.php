@@ -7,14 +7,11 @@ define('ORDER_UPTIME', 4);
 
 class project extends base
 {
-
-	private $user;
 	private $data;
 	private $pid;
 
-	public function __construct($user, $pid)
+	public function __construct($pid)
 	{
-		$this->user = $user;
 		$this->pid = $pid;
 
 		$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
@@ -23,9 +20,9 @@ class project extends base
 		$this->data = $this->data->dataObj;
 
 		$fail = (($this->data->access_level == 0) ||
-				($this->data->access_level == 1 && $this->user->access_level == 1) ||
-				($this->data->access_level <= 2 && $this->data->class == $this->user->class && $this->user->access_level == 2)  ||
-				($this->data->access_level <= 2 && $this->user->access_level == null)) && $this->data->owner != $this->user->id && $this->user->access_level != 0;
+				($this->data->access_level == 1 && getUser()->access_level == 1) ||
+				($this->data->access_level <= 2 && $this->data->class == getUser()->class && getUser()->access_level == 2)  ||
+				($this->data->access_level <= 2 && getUser()->access_level == null)) && $this->data->owner != getUser()->id && getUser()->access_level != 0;
 
 		if ($fail)
 			return $this->throwWarning('$user has no access to the project');
@@ -51,7 +48,7 @@ class project extends base
 
 	public function __set($name, $value)
 	{
-		if($user->data->id != $this->data->owner)
+		if(getUser()->data->id != $this->data->owner)
 			return;
 		
 		switch ($name)
@@ -156,7 +153,7 @@ class project extends base
 		return $result;
 	}
 
-	public static function addProject($user, $folder, $name, $access_level, $description = NULL, $list = NULL)
+	public static function addProject($folder, $name, $access_level, $description = NULL, $list = NULL)
 	{
 		$access_level = intval($access_level);
 		$query = array();
@@ -172,7 +169,7 @@ class project extends base
 		if (!is_int($list) && $list != NULL)
 			$this->throwError('$list isn`t a string nor NULL');
 
-		$query['owner'] = intval($user->id);
+		$query['owner'] = intval(getUser()->id);
 		$query['name'] = $name;
 		$query['description'] = ($description === null ? 'NULL' : $description);
 		$query['access_level'] = $access_level;
