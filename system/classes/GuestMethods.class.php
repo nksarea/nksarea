@@ -24,6 +24,7 @@ class GuestMethods extends base implements Methods {
 	 * @param string $hash Registrierungshash
 	 * @param string $email E-Mail Adresse des Mitglieds
 	 * @return mixed ID der Registrierung oder false (erzeugt Fehler)
+	 * @author Cédric Neukom
 	 */
 	public function getRegistration($hash, $email) {
 		// Falls Login durchgeführt werden kann abbrechen
@@ -47,6 +48,7 @@ class GuestMethods extends base implements Methods {
 	 * @param string $password Passwort
 	 * @return mixed true bei Erfolg oder String mit Fehlermeldung, false falls
 	 *				Datenbankabfrage fehlschlug
+	 * @author Cédric Neukom
 	 */
 	public function completeRegistration($id, $hash, $username, $password) {
 		// Falls login durchgeführt werden kann abbrechen
