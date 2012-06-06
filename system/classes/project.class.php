@@ -7,14 +7,12 @@ define('ORDER_UPTIME', 4);
 
 class project extends base
 {
-
-	private $user;
 	private $data;
+	private $versions;
 	private $pid;
 
-	public function __construct($user, $pid)
+	public function __construct($pid)
 	{
-		$this->user = $user;
 		$this->pid = $pid;
 
 		$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
@@ -23,9 +21,9 @@ class project extends base
 		$this->data = $this->data->dataObj;
 
 		$fail = (($this->data->access_level == 0) ||
-				($this->data->access_level == 1 && $this->user->access_level == 1) ||
-				($this->data->access_level <= 2 && $this->data->class == $this->user->class && $this->user->access_level == 2)  ||
-				($this->data->access_level <= 2 && $this->user->access_level == null)) && $this->data->owner != $this->user->id && $this->user->access_level != 0;
+				($this->data->access_level == 1 && getUser()->access_level == 1) ||
+				($this->data->access_level <= 2 && $this->data->class == getUser()->class && getUser()->access_level == 2)  ||
+				($this->data->access_level <= 2 && getUser()->access_level == null)) && $this->data->owner != getUser()->id && getUser()->access_level != 0;
 
 		if ($fail)
 			return $this->throwWarning('$user has no access to the project');
@@ -40,6 +38,7 @@ class project extends base
 				break;
 			case 'owner':
 			case 'name':
+			case 'version':
 			case 'description':
 			case 'access_level':
 			case 'upload_time':
@@ -51,7 +50,7 @@ class project extends base
 
 	public function __set($name, $value)
 	{
-		if($user->data->id != $this->data->owner)
+		if(getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0)
 			return;
 		
 		switch ($name)
@@ -99,7 +98,7 @@ class project extends base
 			$name = explode('\\', $mask);
 			$name = $name[count($name) - 1];
 
-			var_dump(getRAR()->execute('prepareDownload', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path)));
+			getRAR()->execute('prepareDownload', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path));
 			return array('path' => $path, 'name' => $name);
 		}
 	}
@@ -108,81 +107,48 @@ class project extends base
 	{
 		//@todo
 	}
-
-	public static function getPid($order_by, $order_desc, $filter, $user)
+	public function setVersion($version, $folder = false)
 	{
-		if (!is_bool($order_desc))
-			$this->throwError('$order_desc isn`t a bool');
-		if (!is_array($filter))
-			$this->throwError('$filter isn`t an array');
-
-		switch ($order_by)
+		$versionFile = SYS_SHARE_PROJECTS . $this->pid . '-v' . $version;
+	
+		if(!is_file($versionFile) && ($folder === false || !is_file(SYS_TMP . $folder)))
+			$this->throwError ('$version isn`t currently present');	
+		if(rename(SYS_SHARE_PROJECTS . $pid . '.rar', SYS_SHARE_PROJECTS . $pid . '-v' . $this->data->version))
+			$this->throwError ('couldn`t rename file');
+		
+		if(!is_file($versionFile))
 		{
-			case ORDER_NAME:
-				$query['order'] = 'name';
-				break;
-			case ORDER_OWNER:
-				$query['order'] = 'owner';
-				break;
-			case ORDER_LIST:
-				$query['order'] = 'list';
-				break;
-			case ORDER_UPTIME:
-				$query['order'] = 'upload_time';
-				break;
-			default:
-				$query['order'] = 'name';
-				break;
+			getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => $versionFile));
+			$this->versions[] = $version;
+//			Sorting array ->
 		}
+		
+		$this->data->version = $version;
+		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'version', 'value' => $version));
 
-		$query['desc'] = '';
-		$query['filter'] = $filter;
-		$query['user'] = $user->id;
-		$query['class'] = $user->class;
-		$query['userAL'] = $user->access_level;
-
-		if ($order_desc)
-			$query['desc'] = 'DESC';
-
-		if (!$query = getDB()->query('getPid', $query))
-			return false;
-
-		do
-		{
-			$result[] = $query->dataArray[0];
-		}
-		while ($query->next());
-
-		return $result;
+		if(rename($versionFile, SYS_SHARE_PROJECTS . $pid . '.rar'))
+			$this->throwError ('couldn`t rename file');
+		return true;
 	}
-
-	public static function addProject($user, $folder, $name, $access_level, $description = NULL, $list = NULL)
+	
+	public function getVersions()
 	{
-		$access_level = intval($access_level);
-		$query = array();
+		if(is_array($this->versions))
+			return $this->versions;
 
-		if (!is_dir(SYS_TMP . $folder))
-			$this->throwError('$folder isn`t a folder');
-		if (!is_string($name))
-			$this->throwError('$name isn`t a string');
-		if ($access_level < 0 && $acces_level > 4)
-			$this->throwError('$access_level isn`t valid');
-		if (!is_string($description) && $description != NULL)
-			$this->throwError('$description isn`t a string nor NULL');
-		if (!is_int($list) && $list != NULL)
-			$this->throwError('$list isn`t a string nor NULL');
-
-		$query['owner'] = intval($user->id);
-		$query['name'] = $name;
-		$query['description'] = ($description === null ? 'NULL' : $description);
-		$query['access_level'] = $access_level;
-		$query['list'] = ($list === null ? 'NULL' : intval($list));
-
-		$result = getDB()->query('addProject', $query);
-		if (!$result)
-			$this->throwError('MYSQLi hates you!');
-
-		return getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id . '.rar'));
+		$this->versions = array($this->data->version);
+		
+		$dir = opendir(SYS_SHARE_PROJECTS);
+		while (($file = readdir($dir)) !== false)
+		{
+			if(strpos($file, $this->pid . '-v') !== 0)
+				continue;
+			
+			$this->versions[] = str_replace($this->pid . '-v', '', $file);
+		}
+		closedir($dir);
+		
+//		Sorting array ->
+		return $this->versions;
 	}
-
 }

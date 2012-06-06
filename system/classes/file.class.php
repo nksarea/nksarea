@@ -2,14 +2,11 @@
 
 class file extends base
 {
-
-	private $user;
 	private $data;
 	private $fid;
 
-	public function __construct($user, $fid)
+	public function __construct($fid)
 	{
-		$this->user = $user;
 		$this->fid = $fid;
 
 		$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
@@ -17,7 +14,7 @@ class file extends base
 			$this->throwError('No file with given fid exists', $this->fid);
 		$this->data = $this->data->dataObj;
 
-		$ok = $user->data->id == $this->data->list_owner || $user->data->id == $this->data->owner;
+		$ok = getUser()->data->id == $this->data->list_owner || getUser()->data->id == $this->data->owner;
 
 		if (!$ok)
 			$this->throwError('$user has no access to the project');;
@@ -42,7 +39,7 @@ class file extends base
 
 	public function __set($name, $value)
 	{
-		if($user->data->id != $this->data->owner)
+		if(getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0)
 			return;
 
 		switch ($name)
@@ -65,25 +62,6 @@ class file extends base
 			default:
 				return;
 		}
-	}
-	static function addFile($name, $list, $file)
-	{
-		$query = array();
-		
-		if(!is_string($name))
-			$this->throwError ('$name isn`t a string', $name);
-		if(!is_file(SYS_TMP . $file))
-			$this->throwError ('$file isn`t a file', $file);
-
-		$query['name'] = $name;
-		$query['owner'] = intval($this->user->id);
-		$query['list'] = intval($list);
-		$query['mime'] = mime_content_type($file);
-		
-		if (getDB()->query('addProject', $query))
-			$this->throwError('MYSQLi hates you!');
-
-		return getRAR()->execute('moveFile', array('source' => SYS_TMP . $file, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id));
 	}
 	function removeFile()
 	{
