@@ -1,3 +1,4 @@
 nbproject/
-system/temp/*
+system/temp/
+system/trash/
 system/functions/getDB.fn.php
