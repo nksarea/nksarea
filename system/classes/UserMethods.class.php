@@ -72,5 +72,53 @@ class UserMethods extends base implements Methods {
 		else
 			return $this->throwError('A technical error occurred. The list has not been created.');
 	}
+	
+	public function addProject($folder, $name, $access_level, $description = NULL, $list = NULL)
+	{
+		$access_level = intval($access_level);
+		$query = array();
 
+		if (!is_dir(SYS_TMP . $folder))
+			$this->throwError('$folder isn`t a folder');
+		if (!is_string($name))
+			$this->throwError('$name isn`t a string');
+		if ($access_level < 0 && $acces_level > 4)
+			$this->throwError('$access_level isn`t valid');
+		if (!is_string($description) && $description != NULL)
+			$this->throwError('$description isn`t a string nor NULL');
+		if (!is_int($list) && $list != NULL)
+			$this->throwError('$list isn`t a string nor NULL');
+
+		$query['owner'] = intval(getUser()->id);
+		$query['name'] = $name;
+		$query['description'] = ($description === null ? 'NULL' : $description);
+		$query['access_level'] = $access_level;
+		$query['list'] = ($list === null ? 'NULL' : intval($list));
+
+		$result = getDB()->query('addProject', $query);
+		if (!$result)
+			$this->throwError('MYSQLi hates you!');
+
+		return getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id . '.rar'));
+	}
+
+	function addFile($name, $list, $file)
+	{
+		$query = array();
+		
+		if(!is_string($name))
+			$this->throwError ('$name isn`t a string', $name);
+		if(!is_file(SYS_TMP . $file))
+			$this->throwError ('$file isn`t a file', $file);
+
+		$query['name'] = $name;
+		$query['owner'] = intval(getUser()->id);
+		$query['list'] = intval($list);
+		$query['mime'] = mime_content_type($file);
+		
+		if (getDB()->query('addProject', $query))
+			$this->throwError('MYSQLi hates you!');
+
+		return getRAR()->execute('moveFile', array('source' => SYS_TMP . $file, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id));
+	}
 }
