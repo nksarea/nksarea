@@ -61,7 +61,7 @@ class User extends base {
 		session_start();
 
 		// Prüft, ob bereits eingeloggt und übernimmt Sitzung
-		if(empty($_SESSION['user']) && !$this->check($_SESSION['user'], $_SESSION['pwd'])) {
+		if(!empty($_SESSION['user']) && !$this->check($_SESSION['user'], $_SESSION['pwd'])) {
 			session_destroy();
 			$this->throwError('You session is invalid. One possible reason for this problem is, that you were inactive for a too long timespan. Another reason would be, that somebody has stolen your Session-ID cookie and has now logged in to your account without your password.');
 		}
