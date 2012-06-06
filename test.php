@@ -8,7 +8,4 @@ include_once 'system/functions/getMethods.fn.php';
 
 $warning = array();
 
-var_dump(getDB()->query('refreshDataF', array('fid' => 1))->dataObj);
-
-var_dump($warning);
-?>
+var_dump(getDB());
