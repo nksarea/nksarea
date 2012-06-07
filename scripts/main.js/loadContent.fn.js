@@ -90,8 +90,8 @@ function loadContent(e, post, ct) {
 						break;
 
 					case 'report':
-						// Meldung für Benutzer anzeigen
-						// TODO Template::report();
+						// Meldung vom Server für Benutzer anzeigen
+						report(x[i].getAttribute('content'), parseInt(x[i].getAttribute('level')));
 						break;
 				}
 			break;
