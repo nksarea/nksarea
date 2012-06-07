@@ -111,13 +111,13 @@ class project extends base
 	{
 		$versionFile = SYS_SHARE_PROJECTS . $this->pid . '-v' . $version;
 	
-		if(!is_file($versionFile) && ($folder === false || !is_file(SYS_TMP . $folder)))
-			$this->throwError ('$version isn`t currently present');	
-		if(rename(SYS_SHARE_PROJECTS . $pid . '.rar', SYS_SHARE_PROJECTS . $pid . '-v' . $this->data->version))
+		if(!rename(SYS_SHARE_PROJECTS . $this->pid . '.rar', SYS_SHARE_PROJECTS . $this->pid . '-v' . $this->data->version))
 			$this->throwError ('couldn`t rename file');
 		
 		if(!is_file($versionFile))
 		{
+			if(!is_dir(SYS_TMP . $folder))
+				$this->throwError ('$version isn`t currently present');	
 			getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => $versionFile));
 			$this->versions[] = $version;
 //			Sorting array ->
@@ -126,7 +126,7 @@ class project extends base
 		$this->data->version = $version;
 		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'version', 'value' => $version));
 
-		if(rename($versionFile, SYS_SHARE_PROJECTS . $pid . '.rar'))
+		if(!rename($versionFile, SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError ('couldn`t rename file');
 		return true;
 	}
