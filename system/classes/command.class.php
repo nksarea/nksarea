@@ -40,6 +40,7 @@ class command extends base
 
 	public function execute($template, $input, $asynchron = false)
 	{
+		$this->output = array();
 		$path = SYS_TMP . uniqid();
 		if (!mkdir($path))
 			$this->throwError("Couldn`t create directory", $path);
