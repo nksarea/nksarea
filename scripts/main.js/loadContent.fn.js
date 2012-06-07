@@ -85,7 +85,6 @@ function loadContent(e, post, ct) {
 								document.head.appendChild(tag);
 							else
 								document.body.appendChild(tag); // IE 8
-							console.log('added tag '+x[i].tagName);//
 						}
 						break;
 
