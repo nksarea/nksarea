@@ -50,7 +50,7 @@ class rar extends base implements Plugin
 			$path = array_reverse($path);
 
 			foreach ($path as $value)
-				$temp = array($value => $temp);
+				$temp = array(ltrim($value) => $temp);
 
 			$content = array_merge_recursive($temp, $content);
 		}
