@@ -12,7 +12,7 @@ include_once 'system/functions/getMethods.fn.php';
 $warning = array();
 
 // Template inizialisieren
-$template = new LanguageTemplate(SYS_UI_TMPL_DIR);
+$template = new Template(SYS_UI_TMPL_DIR, $_GET['page'] . '.html');
 
 // Seite ausführen
 if(empty($_GET['page']))
@@ -36,14 +36,15 @@ if($template instanceof Template)
 		$template->addCSS('styles/css/beta.css');
 		$template->addCSS('styles/css/elements.css');
 		$template->addCSS('styles/css/content.css');
+		$template->addCSS('styles/css/slideshow.css');
 		$template->addJS('scripts/main');
 
 		//  und leere Felder füllen
-		foreach($template->getEmptyFields() as $emptyField) {
-			$emptyField = substr($emptyField, 1);
-			if(is_file(SYS_FIELD_DIR.$emptyField.'.php'))
-				include(SYS_FIELD_DIR.$emptyField.'.php');
-		}
+//		foreach($template->getEmptyFields() as $emptyField) {
+//			$emptyField = substr($emptyField, 1);
+//			if(is_file(SYS_FIELD_DIR.$emptyField.'.php'))
+//				include(SYS_FIELD_DIR.$emptyField.'.php');
+//		}
 		$template->createHTML();
 	}
 

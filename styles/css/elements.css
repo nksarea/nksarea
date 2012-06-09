@@ -2,7 +2,7 @@ body{
 	margin: 0px 0px 0px 0px;
 	padding: 10px 10% 50px 0px;
 
-	background-color: #EEEEEE;
+	background-color: #FFFFFF;
 }
 
 a{
@@ -35,6 +35,9 @@ table .head-col{
 }
 table .content-col{
 	width: auto;
+}
+table tr{
+	height: 28px;
 }
 table tr td{
 	padding: 3px 0px 3px 20px;
