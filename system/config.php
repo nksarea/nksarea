@@ -35,6 +35,9 @@ define('SYS_PLUGIN_FOLDER', SYS_ROOT . 'system/classes/plugins/');
 /** Pfad zum Templateordner														*/
 define('SYS_TEMPLATE_FOLDER', SYS_ROOT . 'system/template/');
 
+/** Pfad zum Templateordner														*/
+define('SYS_ICON_FOLDER', SYS_ROOT . 'styles/icons/');
+
 /** Pfad zum Ordner mit den UserInterface Templates								*/
 define('SYS_UI_TMPL_DIR', SYS_ROOT . 'system/template/html/');
 
