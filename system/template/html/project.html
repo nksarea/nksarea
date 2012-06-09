@@ -4,9 +4,9 @@
 	<head></head>
 	<body>
 		<div class ="content">
-			<div class="title">%{projectName}%</div>
+			<div class="title" style="color: hsl(%{projectColor}%, 100%, 30%)">%{projectName}%</div>
 			<div class="box project-box">
-				<img src="styles/icons/icon.png"/>
+				<div class="image" style="background-color: hsl(%{projectColor}%, 100%, 30%)"><img src="styles/icons/%{projectIcon}%"/></div>
 				<table>
 					<colgroup>
 						<col class="head-col"/>
@@ -33,7 +33,11 @@
 				</div>
 			</div>
 			<div class="box files-box">
-				<div class="head"><div class="text">some</div><image src="styles/images/path-separator.png"/><div class="text">random</div><image src="styles/images/path-separator.png"/><div class="text">hipster</div><image src="styles/images/path-separator.png"/><div class="text">shit</div><image src="styles/images/path-separator.png"/></div>
+				<div class="button"></div>
+				<div class="button"></div>
+				<div class="head">
+					<div class="path"></div>
+				</div>
 				%{projectFilesTable}%
 			</div>
 			<div class="box comment-box">

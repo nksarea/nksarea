@@ -1,14 +1,20 @@
 $(document).ready(function(){ 
-	var element = $('[data-path="/"]');
-	
-	$(element).attr('class', 'show');
+	changeFolder('/');
+	setTimeout(function() {
+		var color = $('.title')[0].style.color;
+		$('.button').each(function(index){
+			var top = this.parentNode.offsetTop + 20 + index * 60;
+			$(this).css('top', top);
+			$(this).css('background-color', color);
+		});
+	},50);
 });
 
 function changeFolder(path){
 	var elementOld = $('.show[data-path]"]');
 	var elementNew = $('[data-path="' + path + '"]');
-	var head = $('.files-box .head');
-	var projectName = $('.title')[0].innerHTML;
+	var head = $('.files-box .head .path');
+	var title = $('.title')[0];
 	$(head).empty();
 	
 	var splitPath = path.split('/');
@@ -24,22 +30,24 @@ function changeFolder(path){
 		
 		if(index == 0)
 		{
-			var txt = document.createTextNode(projectName);
-			div.style.color = 'red';
+			var txt = document.createTextNode(title.innerHTML);
+			div.style.color = title.style.color;
 		}
 		else
 		{
 			var txt = document.createTextNode(splitPath[index]);
 		}
 		
-		div.appendChild(txt);head.append(div);head.append(img);
+		div.appendChild(txt);
+		head.append(div);
+		head.append(img);
 	}
 	
 	var heightOld = $(elementOld).css('height');
 
 	$(elementOld).animate({
 		height: $(elementNew).css('height')
-	}, 500, function() {
+	}, 250, function() {
 		$(elementOld).attr('class', 'hidden');
 		$(elementOld).css('height', heightOld);
 		$(elementNew).attr('class', 'show');
