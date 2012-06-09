@@ -32,7 +32,10 @@ if($template instanceof Template)
 	else {
 		// Für HTML ganzes Dokument laden:
 		//  standard Stylesheet- und Scriptdateien einbinden
-		$template->addCSS('styles/default.css');
+		$template->addCSS('styles/css/main.css');
+		$template->addCSS('styles/css/beta.css');
+		$template->addCSS('styles/css/elements.css');
+		$template->addCSS('styles/css/content.css');
 		$template->addJS('scripts/main');
 
 		//  und leere Felder füllen

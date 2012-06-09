@@ -1,0 +1,198 @@
+.content{
+	position: relative;
+	width: 950px;
+	margin: 0px auto 0px auto;
+	padding: 0px 50px 0px 50px;
+}
+.content .title:first-child{
+	margin-top: 0px;
+}
+.content .title{
+	margin: 0px 0px 20px 0px;
+	padding: 0px 0px 0px 40px;
+	height: 40px;
+
+	font-family: "Droid Sans",sans-serif;
+	font-size: 40px;
+	font-weight: 900;
+	font-variant: small-caps;
+	color: #FF7722;
+}
+.content .subtitle{
+	margin: 0px 0px 0px 0px;
+	padding: 0px 20px 0px 0px;
+
+	font-size: 25px;
+	text-align: right;
+	color: #666666;
+}
+.content .box{
+	clear: both;
+	margin: 20px 0px 0px 0px;
+
+	background-color: #FFFFFF;
+	-moz-box-shadow: 0px 0px 10px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 10px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 10px rgba(60,60,60,0.1);
+
+	font-family: Calibri,sans-serif;
+	font-size: 16px;
+}
+
+/*Text-Box--------------------------------------------------------------------*/
+.content .text-box{
+	padding: 10px 0px 10px 0px;
+}
+.content .text-box p{
+	font-family: "Droid Sans",Calibri,sans-serif;
+	font-size: 20px;
+	font-variant: small-caps;
+	font-weight: 900;
+	color: #666666;
+}
+.content .text-box img{
+	width: 200px;
+	height: 200px;
+	margin: 10px 20px 10px 0px;
+	float: left;
+}
+.content .text-box .video{
+	height: 360px;
+	margin: 10px 0px 10px 0px;
+	padding: 0px 0px 0px 40px;
+
+	background-color: #333333;
+}
+.content .text-box iframe{
+	width: 640px;
+	height: 360px;
+}
+.content .text-box .text{
+	padding: 0px 20px 0px 20px;
+}
+/*Text-Box--------------------------------------------------------------------*/
+
+/*Comment-Box-----------------------------------------------------------------*/
+.content .comment-box{
+	padding: 10px 0px 10px 0px;
+}
+.content .comment-box .comment .footer{
+	text-align: right;
+
+	font-style: italic;
+	color: #666666;
+}
+/*Comment-Box-----------------------------------------------------------------*/
+
+/*Project-Box-----------------------------------------------------------------*/
+.content .project-box{
+	padding: 10px 0px 10px 0px;
+}
+.content .project-box img{
+	width: 196px;
+	height: 196px;
+	padding: 0px 0px 0px 10px;
+	float: left;
+}
+.content .project-box table{
+	width: 744px;
+	margin: 0px 0px 0px 196px;
+}
+.content .project-box table span{
+	color: #FF7722;
+}
+/*Project-Box-----------------------------------------------------------------*/
+
+/*Files-Box-------------------------------------------------------------------*/
+.content .files-box{
+	padding: 10px 0px 10px 0px;
+}
+.content .files-box .head{
+	height:	30px;
+	padding: 0px 0px 0px 40px;
+
+	background-color: #333333;
+
+	font-size: 20px;
+	color: #EEEEEE;
+}
+.content .files-box .head .text{
+	padding: 3px 5px 3px 5px;
+	float: left;
+}
+.content .files-box .head img{
+	float: left;
+}
+.content .files-box table{
+	width: 100%;
+}
+.content .files-box table colgroup .name-col{
+	width: auto;
+}
+.content .files-box table colgroup .size-col{
+	width: 200px;
+}
+.content .files-box table colgroup .modified-col{
+	width: 105px;
+}
+.content .files-box table colgroup .type-col{
+	width: 90px;
+}
+.content .files-box table th{
+	color: #FF7722;
+}
+.content .files-box table td{
+	padding: 3px 20px 3px 20px;
+
+	text-align: right;
+}
+.content .files-box table img{
+	width: 17px;
+	height: 13px;
+	margin: 5px 5px 0px 0px;
+}
+/*Files-Box-------------------------------------------------------------------*/
+
+/*Search-Box------------------------------------------------------------------*/
+.content .search-box{
+	padding: 40px 10px 10px 10px;
+}
+/*Search-Box------------------------------------------------------------------*/
+
+/*Result-Box------------------------------------------------------------------*/
+.content .result-box{
+	padding: 10px 0px 10px 0px;
+}
+.content .result-box .result{
+	height: 40px;
+	padding: 0px 5px 0px 5px;
+
+	border-color: #333333;
+}
+.content .result-box .result img{
+	width: 40px;
+	height: 40px;
+	float: left;
+}
+.content .result-box .result table{
+	width: 830px;
+	padding: 5px 0px 5px 0px;
+	margin: 0px 0px 0px 50px;
+
+	font-size: 20px;
+}
+.content .result-box .result table span{
+	padding: 0px 0px 0px 4px;
+
+	color: #AAAAAA;
+}
+.content .result-box .result table .author-col{
+	width: 200px;
+}
+.content .result-box .result table tr:nth-child(odd){
+	background-color: transparent;
+}
+.content .result-box .result table th{
+	color: #FF7722;
+}
+/*Result-Box------------------------------------------------------------------*/

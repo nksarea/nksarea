@@ -1,0 +1,38 @@
+root { 
+    display: block;
+}
+.rightnav{
+	-webkit-transform: rotate(90deg);
+	-webkit-transform-origin: top right;
+	position: absolute;
+	
+	text-align: left;
+	
+	width: 500px;
+	height: 20px;
+	
+	top: 608px;
+	right: 0;
+}
+.leftnav{
+	-webkit-transform: rotate(-90deg);
+	-webkit-transform-origin: top left;
+	position: absolute;
+
+	text-align: right;
+	
+	width: 500px;
+	height: 20px;
+	
+	top: 608px;
+	left: 0;
+}
+.rightnav a{
+	margin: 0px 10px 0px 0px;
+	
+	font-family: Droid Sans-serif;
+	font-size: 20px;
+	text-align: right;
+	text-transform: uppercase;
+	color: #666;
+}
