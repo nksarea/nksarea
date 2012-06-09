@@ -5,6 +5,7 @@ error_reporting(E_ALL^E_NOTICE);
 include_once 'system/config.php';
 include_once 'system/functions/autoload.fn.php';
 include_once 'system/functions/getDB.fn.php';
+include_once 'system/functions/getRAR.fn.php';
 include_once 'system/functions/getUser.fn.php';
 include_once 'system/functions/getMethods.fn.php';
 
@@ -37,7 +38,6 @@ if($template instanceof Template)
 		$template->addCSS('styles/css/elements.css');
 		$template->addCSS('styles/css/content.css');
 		$template->addCSS('styles/css/slideshow.css');
-		$template->addJS('scripts/main');
 
 		//  und leere Felder füllen
 //		foreach($template->getEmptyFields() as $emptyField) {

@@ -124,7 +124,9 @@
 	float: left;
 }
 .content .files-box table{
+/*	position: absolute;*/
 	width: 100%;
+	background-color: white;
 }
 .content .files-box table colgroup .name-col{
 	width: auto;
