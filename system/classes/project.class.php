@@ -10,6 +10,7 @@ class project extends base
 
 	private $data;
 	private $versions;
+	private $info;
 	private $pid;
 
 	public function __construct($pid)
@@ -17,9 +18,19 @@ class project extends base
 		$this->pid = $pid;
 
 		$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
-		if ($this->data->dataLength === null)
+		if ($this->data === null)
 			$this->throwError('No project with given pid exists', $this->pid);
 		$this->data = $this->data->dataObj;
+
+		$temp = getDB()->query('refreshDataProjectInfo', array('pid' => $this->pid));
+		$this->info = $temp;
+		if ($temp !== null)
+		{
+			$this->info = array();
+			do
+				$this->info[$temp->dataObj->key] = $temp->dataObj->value;
+			while ($temp->next());
+		}
 
 		$fail = (($this->data->access_level == 0) ||
 				($this->data->access_level == 1 && getUser()->access_level == 1) ||
@@ -35,6 +46,7 @@ class project extends base
 		switch ($name)
 		{
 			case 'pid':
+			case 'info':
 				return $this->$name;
 				break;
 			case 'owner':
@@ -118,6 +130,9 @@ class project extends base
 
 	public function setVersion($version, $folder = false)
 	{
+		if (preg_match('/^[0-9]+\.[0-9]+\.[0-9]+$/', $version))
+			$this->throwError('$version isn`t a version number', $version);
+
 		$versionFile = SYS_SHARE_PROJECTS . $this->pid . '-v' . $version;
 
 		if (!rename(SYS_SHARE_PROJECTS . $this->pid . '.rar', SYS_SHARE_PROJECTS . $this->pid . '-v' . $this->data->version))
@@ -137,6 +152,29 @@ class project extends base
 
 		if (!rename($versionFile, SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('couldn`t rename file');
+		return true;
+	}
+
+	public function setInfo($key, $value)
+	{
+		if (!is_string($key))
+			$this->throwError('$key isn`t a string', $key);
+		if (!is_string($value) && $value !== NULL)
+			$this->throwError('$value isn`t a string nor NULL', $value);
+
+		if ($value === NULL)
+		{
+			getDB()->query('removeProjectInfo', array('pid' => $this->pid, 'key' => $key));
+			if (getDB()->affected_rows === 0)
+				return false;
+			unset($this->info[$key]);
+			return true;
+		}
+		else if (!is_array($this->info) || empty($this->info[$key]))
+			getDB()->query('addProjectInfo', array('pid' => $this->pid, 'key' => $key, 'value' => $value));
+		else
+			getDB()->query('setProjectInfo', array('pid' => $this->pid, 'key' => $key, 'value' => $value));
+		$this->info[$key] = $value;
 		return true;
 	}
 
@@ -209,23 +247,23 @@ class project extends base
 				break;
 			default:
 				$delta = $max - $min;
-				
+
 				if ($r == $max)
-					$h = 0 + ( $g - $b ) / $delta;			
+					$h = 0 + ( $g - $b ) / $delta;
 				else if ($g == $max)
 					$h = 2 + ( $b - $r ) / $delta;
 				else
 					$h = 4 + ( $r - $g ) / $delta;
-				
+
 				$h *= 60;
 				if ($h < 0)
 					$h += 360;
 		}
 		$im = imagecreatetruecolor(196, 196);
 		imagecopyresampled($im, $imorig, 0, 0, 0, 0, 196, 196, $width, $height);
-		if(!imagejpeg($im, SYS_ICON_FOLDER . $this->pid . '.jpg'))
+		if (!imagejpeg($im, SYS_ICON_FOLDER . $this->pid . '.jpg'))
 			$this->throwError('even your filesystem hates you and won`t save your image');
-		
+
 		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'color', 'value' => $h));
 		$this->data->color = $h;
 	}
