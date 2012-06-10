@@ -5,19 +5,21 @@
  * @author Cédric Neukom
  */
 function catchFDAs(e) {
-	if(!window.XMLHttpRequest || !window.File)
+	if(!window.XMLHttpRequest || !window.File || !window.FormData)
 		throw "Browser doesn\t support AJAX-Fileuploads.";
 
 	if(!e.target instanceof HTMLElement)
-		throw 'Browser seems confused.';
+		throw "Browser seems confused.";
 
-	//
-	var fda = document.querySelector('[data-fda-submit]');
-	for(var i = 0; i < a.length; i++) {
-		fda.registerEvent('dragover', hoverFDA);
-		fda.registerEvent('drop', handleFiles);
+	// Alle Elemente, die über einen SubmitPath verfügen, sind FDAs
+	var fda = document.querySelectorAll('[data-fda-submit]');
+	for(var i = 0; i < fda.length; i++) {
+		fda[i].registerEvent('dragover', hoverFDA);
+		fda[i].registerEvent('dragenter', hoverFDA);
+		fda[i].registerEvent('drop', handleFiles);
 	}
 }
 
-registerEvent('load', catchLinks);
-registerEvent('initialize', catchLinks);
+// Event global registrieren
+registerEvent('load', catchFDAs);
+registerEvent('initialize', catchFDAs);

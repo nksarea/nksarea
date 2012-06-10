@@ -11,7 +11,7 @@ function catchLinks(e) {
 		e.target = e.srcElement;
 
 	if(!e.target instanceof HTMLElement)
-		throw 'Browser seems confused.';
+		throw "Browser seems confused.";
 
 	var a = e.target.getElementsByTagName('a');
 	for(var i = 0; i < a.length; i++)
@@ -19,5 +19,6 @@ function catchLinks(e) {
 			a[i].registerEvent('click', loadContent);
 }
 
+// Event global registrieren
 registerEvent('load', catchLinks);
 registerEvent('initialize', catchLinks);
