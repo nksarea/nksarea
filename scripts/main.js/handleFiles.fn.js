@@ -1,83 +1,71 @@
-/* TODO handleFiles
- * Handles dropped files to upload to given target (or default)
- *
-function fileDropHandler(e) {
-	var fileHandle, i;
-	if(e.dataTransfer.files && (fileHandle = getFileHandler(e))) {
-		var toUpload = [];
-		var wrongType = [];
-		stopFilePropagation(e);
-
-		for(i = 0; i < e.dataTransfer.files.length; i++)
-			if(!fileHandle.mimeMatch instanceof RegExp || e.dataTransfer.files[i].type.match(fileHandle.mimeMatch))
-				toUpload.push(e.dataTransfer.files[i]);
-			else if(e.dataTransfer.files[i].size)
-				wrongType.push(e.dataTransfer.files[i].name);
-
-		if(wrongType.length && toUpload.length) {
-			if(!confirm('The following files had the wrong type to upload to this target: '+ wrongType +'Do you want to upload the remaining files?'))
-				return;
-		} else if(wrongType.length)
-			alert('None of the given files had the required type to upload. No file will be uploaded.');
-
-		for(i = 0; i < toUpload.length; i++)
-			fileUpload(toUpload[i], fileHandle.targetName, fileHandle.postScript, fileHandle.formData, fileHandle.success);
-	}
-}
-
-/*
- * Uploads the given file and adds a proggressbar to the uploadContainer
- *
-function fileUpload(file, targetName, scriptURL, formData, success) {
-	if(!file instanceof File)
-		return false;
-
-	if(!(uploadContainer instanceof HTMLElement)) {
-		uploadContainer = document.createElement('div');
-		uploadContainer.classList.add('uploadContainer');
-		document.body.appendChild(uploadContainer);
+function handleFiles(e) {
+	// Eventweiterverarbeitung unterbinden
+	if(e.preventDefault) {
+		e.preventDefault();
+		e.stopPropagation();
 	}
 
-	uploadContainer.classList.add('enabled');
+	// Dateitypprüfung?
+	var mimeMatch = e.target.dataset.fdaMime;
+	if(mimeMatch)
+		mimeMatch = new RegExp(mimeMatch);
 
-	var bar = document.createElement('section');
-	var name = document.createElement('h1');
-	var target = document.createElement('address');
-	var progress = document.createElement('progress');
-	var cancel = document.createElement('a');
+	if(e.dataTransfer.files)
+		for(var i = 0; i < e.dataTransfer.files.length; i++) {
+			var box = insertFileBox(
+						e.target.dataset.fdaName,
+						e.dataTransfer.files[i].name,
+						e.dataTransfer.files[i].size);
 
-	uploadContainer.appendChild(bar);
+			if(e.dataTransfer.files[i].size && // nicht-leere Datei: sicher kein Ordner
+					(!mimeMatch || e.dataTransfer.files[i].type)) { // keine Dateityprestriktion oder richtiger Dateityp
+				// FormData vorbereiten
+				var fd = new FormData;
+				fd.append('file', e.dataTransfer.files[i]);
 
-	bar.appendChild(cancel);
-	bar.appendChild(name);
-	bar.appendChild(target);
-	bar.appendChild(progress);
+				// Upload vorbereiten
+				var xhr = new XMLHttpRequest;
+				xhr.box = box; // Damit können auch CallbackFunktionen auf die Box zugreiffen
+				box.xhr = xhr; // Damit kann abort() über die Box auf den Request zugreiffen
+				xhr.open('POST', e.target.dataset.fdaSubmit, true);
 
-	bar.xhr = new XMLHttpRequest;
-	cancel.onclick = cancelRequest;
-	name.innerHTML = file.name;
-	target.innerHTML = targetName ? targetName : 'unknown target';
+				xhr.onreadystatechange = function(e2) {
+					if(this.readyState == 4) {// Wenn der Upload abgeschlossen:
+						// Box anpassen
+						switch(this.status) {
+							case 200:
+								reportFileBox(box, "Filetransfer completed.", 1);
+								box.classList.add('complete');
+								break;
+							default:
+								reportFileBox(box, "An error occurred.", 4);
+						}
 
-	if(!(formData instanceof FormData))
-		formData = new FormData();
-	formData.append('file', file);
+						// Callback ausfürhen
+						if(e.target.dataset.fdaCallback) {
+							var r = eval(e.target.dataSet);
+							// Wenn Rückgabewert eine Funktion ist, führe diese aus
+							// damit wird folgende Schreibweise möglich:
+							//  <div data-fda-callback="myCallbackFunction" ...>
+							if(typeof r == 'function')
+								r(e2);
+						}
+					}
+				}
 
-	bar.xhr.parentNode = bar;
-	bar.xhr.upload.onprogress = function(e) {
-		// update the progress bar
-		if(e.lengthComputable) {
-			progress.max = e.total;
-			progress.value = e.loaded;
+				// Fortschritt des Uploads in der Box anzeigen
+				xhr.upload.onprogress = function(e2) {
+					var progress = box.querySelector('progress');
+					if(progress) {
+						progress.max = e2.total;
+						progress.value = e2.loaded;
+					}
+				}
+
+				// Request absenden: Datei hochladen
+				xhr.send(fd);
+			} else if(e.dataTransfer.files[i].size)
+				reportFileBox(box, "The file has not been uploaded: it had the wrong type.", 3);
+			// Ordner können nicht hochgeladen werden.
 		}
-	}
-	bar.xhr.onload = function(e) {
-		removeBar(e);
-		if(success)
-			success(e);
-	}
-	bar.xhr.onerror = xhrError;
-
-	bar.xhr.open('POST', scriptURL, true);
-	bar.xhr.send(formData);
-	return true;
-}*/
+}
