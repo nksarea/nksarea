@@ -1,5 +1,5 @@
 /*
- * Dies ist nötig, um später, beim drop-Event zugriff auf die Dateien zu erhalten.
+ * Dies ist nötig, um später, beim drop-Event Zugriff auf die Dateien zu erhalten.
  *
  * @author Cédric Neukom
  */

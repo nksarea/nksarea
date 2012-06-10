@@ -7,24 +7,33 @@
  *						application/x-www-form-urlencoded
  * @author Cédric Neukom
  */
-function loadContent(e, post, ct) {
-	var evt;
+function loadContent(evt, post, ct) {
+	var e;
 	// Prüfe nicht, ob AJAX unterstützt wird, da bereits beim Initialisieren geprüft
 
-	// Element aus Event extrahieren
-	if(e instanceof Event) {
-		evt = e;
-		e = e.srcElement ? e.srcElement : e.target; // IE 8
-	}
-	
-	// Pfad aus Element extrahieren
-	if(e instanceof HTMLElement)
-		if(e.href)
-			e = e.href;
+	// Falls HashchangeEvent (im Verlauf zurück oder vorwärts navigiert)
+	if(evt instanceof Event && evt.type == 'hashchange')
+		// Hole Pfad aus location
+		e = '/'+location.hash.substr(1);
 
-	// Falls kein Pfad übermittelt
-	if(typeof e != 'string' || !e.match(/^https?:/))
-		throw 'No path specified';
+	else {
+		// Element aus Event extrahieren
+		if(evt instanceof Event)
+			e = evt.srcElement ? evt.srcElement : evt.target; // IE 8
+		else
+			e = evt;
+	
+		// Pfad aus Element extrahieren
+		if(e instanceof HTMLElement)
+			if(e.href)
+				e = e.href;
+
+		// Falls kein Pfad übermittelt
+		if(typeof e != 'string' || !e.match(/^https?:/))
+			throw "No path specified";
+
+		location.hash = e.match(/^https?:\/\/[^/]+\/(.*)$/)[1];
+	}
 
 	// Laden der Seite verhindern
 	if(evt instanceof Event) {
@@ -48,8 +57,8 @@ function loadContent(e, post, ct) {
 		case 200: // OK
 			// Update übernehmen
 			var x = xhr.responseXML.rootElement ?
-				xhr.responseXML.rootElement : // IE 8
-				xhr.responseXML.documentElement.childNodes;
+			xhr.responseXML.rootElement : // IE 8
+			xhr.responseXML.documentElement.childNodes;
 			var a;
 
 			for(var i = 0; i < x.length; i++)
@@ -113,7 +122,7 @@ function loadContent(e, post, ct) {
 		case 202: // Accepted
 			var poll = xhr.getResponseHeader('X-Poll');
 			if(poll &&
-					(poll = poll.match(/^(\/[^ ]*) ([1-9][0-9]{0,2})$/)))
+				(poll = poll.match(/^(\/[^ ]*) ([1-9][0-9]{0,2})$/)))
 				setTimeout(loadContent, poll[2]*1000, location.protocol+'//'+location.host+poll[1]);
 			else
 				report("Your request was accepted. It will be processed later.");
@@ -123,3 +132,6 @@ function loadContent(e, post, ct) {
 			report("An unknown technical error occurred.", 1);
 	}
 }
+
+// registriere HashchangeEvent: ermöglicht navigieren im Browserverlauf
+registerEvent('hashchange', loadContent);
