@@ -11,8 +11,9 @@ function loadContent(evt, post, ct) {
 	var e;
 	// Prüfe nicht, ob AJAX unterstützt wird, da bereits beim Initialisieren geprüft
 
-	// Falls HashchangeEvent (im Verlauf zurück oder vorwärts navigiert)
-	if(evt instanceof Event && evt.type == 'hashchange')
+	// Falls Hashchange oder Load Event
+	if(evt instanceof Event &&
+			(evt.type == 'hashchange' || evt.type == 'load'))
 		// Hole Pfad aus location
 		e = '/'+location.hash.substr(1);
 
@@ -133,5 +134,9 @@ function loadContent(evt, post, ct) {
 	}
 }
 
-// registriere HashchangeEvent: ermöglicht navigieren im Browserverlauf
+// registriere Hashchange-Event: ermöglicht navigieren im Browserverlauf
 registerEvent('hashchange', loadContent);
+
+// registriere Load-Event: ermöglicht das verschicken von Links aus der Adresszeile
+//  und Neuladen der Seite
+registerEvent('load', loadContent);
