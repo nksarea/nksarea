@@ -6,7 +6,7 @@
  */
 function catchFDAs(e) {
 	if(!window.XMLHttpRequest || !window.File || !window.FormData)
-		throw "Browser doesn\t support AJAX-Fileuploads.";
+		throw "Browser doesn't support AJAX-Fileuploads.";
 
 	if(!e.target instanceof HTMLElement)
 		throw "Browser seems confused.";

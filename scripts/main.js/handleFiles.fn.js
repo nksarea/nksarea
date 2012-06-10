@@ -12,7 +12,11 @@ function handleFiles(e) {
 
 	if(e.dataTransfer.files)
 		for(var i = 0; i < e.dataTransfer.files.length; i++) {
-			var box = insertFileBox(e.target.dataset.fdaName, e.dataTransfer.files[i].name);
+			var box = insertFileBox(
+						e.target.dataset.fdaName,
+						e.dataTransfer.files[i].name,
+						e.dataTransfer.files[i].size);
+
 			if(e.dataTransfer.files[i].size && // nicht-leere Datei: sicher kein Ordner
 					(!mimeMatch || e.dataTransfer.files[i].type)) { // keine Dateityprestriktion oder richtiger Dateityp
 				// FormData vorbereiten
