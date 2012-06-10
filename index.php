@@ -13,12 +13,13 @@ include_once 'system/functions/getMethods.fn.php';
 $warning = array();
 
 // Template inizialisieren
-$template = new Template(SYS_UI_TMPL_DIR, $_GET['page'] . '.html');
+$template = new Template(SYS_UI_TMPL_DIR, $_GET['page'] . '.xhtml');
 
 // Seite ausführen
 if(empty($_GET['page']))
 	$_GET['page'] = 'index';
-if(preg_match('/^[a-z]+$/', $_GET['page']))
+
+if(preg_match('/^[a-zA-Z]+$/', $_GET['page']))
 	if(is_file(SYS_CNT_DIR.$_GET['page'].'.php'))
 		include(SYS_CNT_DIR.$_GET['page'].'.php');
 	else

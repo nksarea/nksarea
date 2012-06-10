@@ -31,7 +31,6 @@ function changeFolder(path){
 		if(index == 0)
 		{
 			var txt = document.createTextNode(title.innerHTML);
-			div.style.color = title.style.color;
 		}
 		else
 		{

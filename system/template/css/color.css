@@ -1,0 +1,58 @@
+.rightnav a{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .title{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .project-box table span{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .files-box table th{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .result-box .result table th{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+a{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+#menu ul li a {
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .project-box .image {
+	background-color: hsl(%{color}%, 100%, 30%) !important;
+}
+.rightnav a{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .project-box table span{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .files-box table th{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .result-box .result table th{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+a{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+#menu ul li a {
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .project-box .image {
+	background-color: hsl(%{color}%, 100%, 30%) !important;
+}
+.element-normal{
+	border-left-color: hsl(%{color}%, 100%, 30%) !important;
+	border-right-color: hsl(%{color}%, 100%, 30%) !important;
+}
+.content .files-box .head .path .text:first-child{
+	color: hsl(%{color}%, 100%, 30%) !important;
+}
+.button{
+	background-color: hsl(%{color}%, 100%, 30%) !important;
+}
+form input[type="text"]{
+	border-color: hsl(%{color}%, 100%, 30%) !important;
+}
