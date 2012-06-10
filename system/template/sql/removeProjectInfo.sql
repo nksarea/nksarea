@@ -1,3 +1,3 @@
 DELETE FROM `projects_info`
-WHERE `key` = '%{key}%'
+WHERE `key` = '%{key}:%'
 AND `project` = '%{pid}%'
