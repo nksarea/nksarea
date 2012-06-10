@@ -10,7 +10,6 @@
 .content .title{
 	margin: 0px 0px 20px 0px;
 	padding: 0px 0px 0px 40px;
-	height: 40px;
 
 	font-family: "Droid Sans",sans-serif;
 	font-size: 40px;
@@ -24,7 +23,7 @@
 
 	font-size: 25px;
 	text-align: right;
-	color: #666666;
+	color: #666666 !important;
 }
 .content .box{
 	clear: both;
@@ -91,11 +90,11 @@
 .content .project-box{
 	padding: 10px 0px 10px 0px;
 }
-.content .project-box img{
+.content .project-box .image img{
 	width: 186px;
 	height: 186px;
 }
-.content .image {
+.content .project-box .image {
 	width: 186px;
 	height: 186px;
 	padding: 5px 5px 5px 5px;
@@ -131,8 +130,19 @@
 	padding: 3px 5px 3px 5px;
 	float: left;
 }
-.content .files-box .head .path img{
-	float: left;
+.content .files-box .text-right{
+	float: right;
+	margin: 5px 5px 5px 0px;
+}
+.content .files-box .message{
+	background-color: white;
+	text-align: center;
+	line-height: 70px;
+	
+	font-family: "Droid Sans",sans-serif;
+	font-size: 30px;
+	font-variant: small-caps;
+	color: #CCCCCC;
 }
 .content .files-box table{
 /*	position: absolute;*/

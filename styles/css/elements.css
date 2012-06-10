@@ -49,6 +49,7 @@ table tr th{
 	font-weight: normal;
 	color: #666666;
 }
+
 table tr:nth-child(odd){
 	background-color: #EFEFEF;
 }
@@ -64,6 +65,7 @@ form input[type="text"]{
 	border: solid 2px #F72;
 	box-sizing: border-box;
 }
+
 form input[type="submit"]{
 	width: 100px;
 	margin: 5px 0px 0px 0px;
@@ -72,4 +74,13 @@ form input[type="submit"]{
 	
 	border: 0;
 	background-color: #F72;
+}
+select{
+	margin: 0px 0px 0px 0px;
+}
+div[data-input]:focus{
+	 outline: none;
+}
+td[data-input]:focus{
+	 outline: none;
 }
