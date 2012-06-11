@@ -145,7 +145,7 @@ class eList extends base {
 		}
 
 		$um = new UserMethods(); // UserMethods Objekt erhalten um Liste zu löschen
-		if($um->remove(UserMethods::REMOVE_LIST, $this->data->id)) {
+		if($um->remove(self::TYPE_LIST, $this->data->id)) {
 			// Werte entfernen, da Objekt nicht zerstört werden kann
 			$this->data = null;
 			$this->permitted = false;

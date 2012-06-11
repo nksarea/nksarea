@@ -120,11 +120,6 @@ class UserMethods extends base implements Methods {
 		return getRAR()->execute('moveFile', array('source' => SYS_TMP . $file, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id));
 	}
 
-	// Die Konstanten definieren, was mit der ::remove-Methode gelöscht werden soll
-	const REMOVE_PROJECT = 1;
-	const REMOVE_FILE = 2;
-	const REMOVE_LIST = 3;
-
 	/** Bereitet das Löschen eines Objektes (Projekt, Datei, Liste) vor
 	 *
 	 * Diese Funktion entfernt einen Datensatz von einer gegebenen Tabelle und schreibt
@@ -134,7 +129,7 @@ class UserMethods extends base implements Methods {
 	 * Diese Funktion prüft die Berechtigung anhand des owner Feldes in der Datenbank.
 	 * Nur der Eigentümer eines Datensatzes und Administratoren dürfen Datensätze löschen.
 	 *
-	 * @param integer $what eine REMOVE_ Konstante, die angibt, von welcher Tabelle
+	 * @param integer $what eine base::TYPE_ Konstante, die angibt, von welcher Tabelle
 	 * 				gelöscht werden soll
 	 * @param integer $id die ID des zu löschenden Eintrags
 	 * @return boolean Im Erfolgsfall true, andernfalls false
@@ -147,15 +142,15 @@ class UserMethods extends base implements Methods {
 
 		// Löschen von Tabelle ...
 		switch ($what) {
-			case self::REMOVE_PROJECT:
+			case self::TYPE_PROJECT:
 				$table = 'projects';
 				break;
 
-			case self::REMOVE_List:
+			case self::TYPE_List:
 				$table = 'lists';
 				break;
 
-			case self::REMOVE_FILE:
+			case self::TYPE_FILE:
 				$table = 'files';
 				break;
 
