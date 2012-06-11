@@ -38,7 +38,7 @@ class project extends base
 				($this->data->access_level <= 2 && getUser()->access_level == null)) && $this->data->owner != getUser()->id && getUser()->access_level != 0;
 
 		if ($fail)
-			return $this->throwWarning('$user has no access to the project');
+			$this->throwError('$user has no access to the project');
 	}
 
 	public function __get($name)
