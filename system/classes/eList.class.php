@@ -143,7 +143,10 @@ class eList extends base {
 				// TODO prüfungen archvieren nach SYS_TRASH
 				break;
 		}
-		if(remove(REMOVE_LIST, $this->data->id)) {
+
+		$um = new UserMethods(); // UserMethods Objekt erhalten um Liste zu löschen
+		if($um->remove(UserMethods::REMOVE_LIST, $this->data->id)) {
+			// Werte entfernen, da Objekt nicht zerstört werden kann
 			$this->data = null;
 			$this->permitted = false;
 			$this->type = null;

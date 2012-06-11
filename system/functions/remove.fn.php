@@ -16,7 +16,7 @@ define('REMOVE_LIST', 3);
  *				gelöscht werden soll
  * @param integer $id die ID des zu löschenden Eintrags
  * @return boolean Im Erfolgsfall true, andernfalls false
- * @discuss eingliedern in UserMethods?
+ * @author Cédric Neukom
  */
 function remove($what, $id) {
 	// Prüfen, ob Benutzer eingeloggt
