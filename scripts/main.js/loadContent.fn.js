@@ -13,11 +13,15 @@ function loadContent(evt, post, ct) {
 
 	// Falls Hashchange oder Load Event
 	if(evt instanceof Event &&
-			(evt.type == 'hashchange' || evt.type == 'load'))
+			(evt.type == 'hashchange' || (evt.type == 'load'))) {
+
+		if(evt.type == 'load' && location.hash.length<=1)
+			return; // Falls Load und kein Hash gegeben: lade nichts neues
+
 		// Hole Pfad aus location
 		e = '/'+location.hash.substr(1);
 
-	else {
+	} else {
 		// Element aus Event extrahieren
 		if(evt instanceof Event)
 			e = evt.srcElement ? evt.srcElement : evt.target; // IE 8
