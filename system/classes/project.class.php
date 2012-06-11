@@ -8,24 +8,34 @@ define('ORDER_UPTIME', 4);
 class project extends base
 {
 
-	private $user;
 	private $data;
+	private $versions;
+	private $info;
 	private $pid;
 
-	public function __construct($user, $pid)
+	public function __construct($pid)
 	{
-//		if (get_class($user) != 'User')
-//			return $this->throwError('$user was not an instance of "User"');
-
-		$this->user = $user;
 		$this->pid = $pid;
 
-		$this->refreshData();
+		$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
+		if ($this->data === null)
+			$this->throwError('No project with given pid exists', $this->pid);
+		$this->data = $this->data->dataObj;
+
+		$temp = getDB()->query('refreshDataProjectInfo', array('pid' => $this->pid));
+		$this->info = $temp;
+		if ($temp !== null)
+		{
+			$this->info = array();
+			do
+				$this->info[$temp->dataObj->key] = $temp->dataObj->value;
+			while ($temp->next());
+		}
 
 		$fail = (($this->data->access_level == 0) ||
-				($this->data->access_level == 1 && $this->user->access_level == 1) ||
-				($this->data->access_level <= 2 && $this->data->class == $this->user->class && $this->user->access_level == 2)  ||
-				($this->data->access_level <= 2 && $this->user->access_level == null)) && $this->data->owner != $this->user->id && $this->user->access_level != 0;
+				($this->data->access_level == 1 && getUser()->access_level == 1) ||
+				($this->data->access_level <= 2 && $this->data->class == getUser()->class && getUser()->access_level == 2) ||
+				($this->data->access_level <= 2 && getUser()->access_level == null)) && $this->data->owner != getUser()->id && getUser()->access_level != 0;
 
 		if ($fail)
 			return $this->throwWarning('$user has no access to the project');
@@ -35,32 +45,47 @@ class project extends base
 	{
 		switch ($name)
 		{
-			case 'data':
-			case 'type':
-			case 'permitted':
+			case 'pid':
+			case 'info':
 				return $this->$name;
 				break;
 			case 'owner':
 			case 'name':
+			case 'version':
+			case 'color':
 			case 'description':
+			case 'access_level':
+			case 'upload_time':
 			case 'list':
 				return $this->data->$name;
+				break;
+			case 'versions':
+				return $this->getVersions();
 				break;
 		}
 	}
 
 	public function __set($name, $value)
 	{
+		if (getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0)
+			return;
+
 		switch ($name)
 		{
-			case 'id':
-			case 'owner':
 			case 'name':
 			case 'description':
 			case 'access_level':
 			case 'list':
 				getDB()->query('setProject', array('id' => $this->pid, 'field' => $name, 'value' => $value));
-				$this->$name = $value;
+				$this->data->$name = $value;
+				break;
+			case 'owner':
+				getDB()->query('setProject', array('id' => $this->pid, 'field' => $name, 'value' => $value));
+				$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
+				$this->data = $this->data->dataObj;
+				break;
+			case 'icon':
+				$this->setIcon($value);
 				break;
 			default:
 				return;
@@ -69,31 +94,31 @@ class project extends base
 
 	public function viewContent()
 	{
-		if (!is_file(SYS_PROJECT_FOLDER . $this->pid . '.rar'))
+		if (!is_file(SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('there is no RAR data for the project');
 
-		getRAR()->execute('viewContent', array('path' => SYS_PROJECT_FOLDER . $this->pid . '.rar'));
+		getRAR()->execute('viewContent', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar'));
 		return getRAR()->plugin('rar_parseContent');
 	}
 
 	public function prepareDownload($mask = false)
 	{
-		if (!is_file(SYS_PROJECT_FOLDER . $this->pid . '.rar'))
+		if (!is_file(SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('there is no RAR data for the project');
 		if (!is_string($mask) && !is_bool($mask))
 			$this->throwError('$filter is not a bool nor a string');
 
 		if ($mask == false)
 		{
-			return array('path' => SYS_PROJECT_FOLDER . $this->pid . '.rar', 'name' => $this->data->name);
+			return array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'name' => $this->data->name);
 		}
 		else
 		{
-			$path = SYS_DOWNLOAD_FOLDER . uniqid();
+			$path = SYS_TMP . uniqid();
 			$name = explode('\\', $mask);
 			$name = $name[count($name) - 1];
 
-			var_dump(getRAR()->execute('prepareDownload', array('path' => SYS_PROJECT_FOLDER . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path)));
+			getRAR()->execute('prepareDownload', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path));
 			return array('path' => $path, 'name' => $name);
 		}
 	}
@@ -103,90 +128,144 @@ class project extends base
 		//@todo
 	}
 
-	public static function getPid($order_by, $order_desc, $filter, $user)
+	public function setVersion($version, $folder = false)
 	{
-		if (!is_bool($order_desc))
-			$this->throwError('$order_desc isn`t a bool');
-		if (!is_array($filter))
-			$this->throwError('$filter isn`t an array');
+		if (preg_match('/^[0-9]+\.[0-9]+\.[0-9]+$/', $version))
+			$this->throwError('$version isn`t a version number', $version);
 
-		switch ($order_by)
+		$versionFile = SYS_SHARE_PROJECTS . $this->pid . '-v' . $version;
+
+		if (!rename(SYS_SHARE_PROJECTS . $this->pid . '.rar', SYS_SHARE_PROJECTS . $this->pid . '-v' . $this->data->version))
+			$this->throwError('couldn`t rename file');
+
+		if (!is_file($versionFile))
 		{
-			case ORDER_NAME:
-				$query['order'] = 'name';
+			if (!is_dir(SYS_TMP . $folder))
+				$this->throwError('$version isn`t currently present');
+			getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => $versionFile));
+			$this->versions[] = $version;
+//			Sorting array ->
+		}
+
+		$this->data->version = $version;
+		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'version', 'value' => $version));
+
+		if (!rename($versionFile, SYS_SHARE_PROJECTS . $this->pid . '.rar'))
+			$this->throwError('couldn`t rename file');
+		return true;
+	}
+
+	public function setInfo($key, $value)
+	{
+		if (!is_string($key))
+			$this->throwError('$key isn`t a string', $key);
+		if (!is_string($value) && $value !== NULL)
+			$this->throwError('$value isn`t a string nor NULL', $value);
+
+		if ($value === NULL)
+		{
+			getDB()->query('removeProjectInfo', array('pid' => $this->pid, 'key' => $key));
+			if (getDB()->affected_rows === 0)
+				return false;
+			unset($this->info[$key]);
+			return true;
+		}
+		else if (!is_array($this->info) || empty($this->info[$key]))
+			getDB()->query('addProjectInfo', array('pid' => $this->pid, 'key' => $key, 'value' => $value));
+		else
+			getDB()->query('setProjectInfo', array('pid' => $this->pid, 'key' => $key, 'value' => $value));
+		$this->info[$key] = $value;
+		return true;
+	}
+
+	private function getVersions()
+	{
+		if (is_array($this->versions))
+			return $this->versions;
+
+		$this->versions = array($this->data->version);
+
+		$dir = opendir(SYS_SHARE_PROJECTS);
+		while (($file = readdir($dir)) !== false)
+		{
+			if (strpos($file, $this->pid . '-v') !== 0)
+				continue;
+
+			$this->versions[] = str_replace($this->pid . '-v', '', $file);
+		}
+		closedir($dir);
+
+//		Sorting array ->
+		return $this->versions;
+	}
+
+	private function setIcon($file)
+	{
+		if (!is_file(SYS_TMP . $file))
+			$this->throwError('$file isn`t a file');
+		if (!$type = getimagesize(SYS_TMP . $file))
+			$this->throwError('GD couldn`t read this image file');
+
+		switch ($type)
+		{
+			case "1":
+				$imorig = imagecreatefromgif(SYS_TMP . $file);
 				break;
-			case ORDER_OWNER:
-				$query['order'] = 'owner';
+			case "2":
+				$imorig = imagecreatefromjpeg(SYS_TMP . $file);
 				break;
-			case ORDER_LIST:
-				$query['order'] = 'list';
-				break;
-			case ORDER_UPTIME:
-				$query['order'] = 'upload_time';
+			case "3":
+				$imorig = imagecreatefrompng(SYS_TMP . $file);
 				break;
 			default:
-				$query['order'] = 'name';
-				break;
+				$imorig = imagecreatefromjpeg(SYS_TMP . $file);
 		}
 
-		$query['desc'] = '';
-		$query['filter'] = $filter;
-		$query['user'] = $user->id;
-		$query['class'] = $user->class;
-		$query['userAL'] = $user->access_level;
+		$width = imagesx($imorig);
+		$height = imagesy($imorig);
 
-		if ($order_desc)
-			$query['desc'] = 'DESC';
+		$im = imagecreatetruecolor(1, 1);
+		imagecopyresampled($im, $imorig, 0, 0, 0, 0, 1, 1, $width, $height);
 
-		if (!$query = getDB()->query('getPid', $query))
-			return false;
+		$rgb = imagecolorat($im, 0, 0);
+		$rgb = imagecolorsforindex($im, $rgb);
 
-		do
+		$r = $rgb['red'] / 255;
+		$g = $rgb['green'] / 255;
+		$b = $rgb['blue'] / 255;
+
+		$min = min($r, $g, $b);
+		$max = max($r, $g, $b);
+
+		switch ($max)
 		{
-			$result[] = $query->dataArray[0];
+			case 0:
+				$h = 0;
+				break;
+			case $min:
+				$h = 0;
+				break;
+			default:
+				$delta = $max - $min;
+
+				if ($r == $max)
+					$h = 0 + ( $g - $b ) / $delta;
+				else if ($g == $max)
+					$h = 2 + ( $b - $r ) / $delta;
+				else
+					$h = 4 + ( $r - $g ) / $delta;
+
+				$h *= 60;
+				if ($h < 0)
+					$h += 360;
 		}
-		while ($query->next());
+		$im = imagecreatetruecolor(196, 196);
+		imagecopyresampled($im, $imorig, 0, 0, 0, 0, 196, 196, $width, $height);
+		if (!imagejpeg($im, SYS_ICON_FOLDER . $this->pid . '.jpg'))
+			$this->throwError('even your filesystem hates you and won`t save your image');
 
-		return $result;
-	}
-
-	protected function refreshData()
-	{
-		$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
-		if($this->data->dataLength === null)
-			$this->throwError('No project with given pid exists', $this->pid);
-		
-		$this->data = $this->data->dataObj;
-		$this->data->class = getDB()->query('refreshClass', array('owner' => $this->data->owner));
-	}
-
-	public static function addProject($user, $folder, $name, $access_level, $description = NULL, $list = NULL)
-	{
-		$access_level = intval($access_level);
-		$query = array();
-
-		if (!is_dir(SYS_UPLOAD_FOLDER . $folder))
-			$this->throwError('$folder isn`t a folder');
-		if (!is_string($name))
-			$this->throwError('$name isn`t a string');
-		if ($access_level < 0 && $acces_level > 4)
-			$this->throwError('$access_level isn`t valid');
-		if (!is_string($description) && $description != NULL)
-			$this->throwError('$description isn`t a string nor NULL');
-		if (!is_int($list) && $list != NULL)
-			$this->throwError('$list isn`t a string nor NULL');
-
-		$query['owner'] = intval($user->id);
-		$query['name'] = $name;
-		$query['description'] = ($description === null ? 'NULL' : $description);
-		$query['access_level'] = $access_level;
-		$query['list'] = ($list === null ? 'NULL' : intval($list));
-
-		$result = getDB()->query('addProject', $query);
-		if (!$result)
-			$this->throwError('MYSQLi hates you!');
-
-		return getRAR()->execute('packProject', array('source' => SYS_UPLOAD_FOLDER . $folder, 'destination' => SYS_PROJECT_FOLDER . getDB()->insert_id . '.rar'));
+		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'color', 'value' => $h));
+		$this->data->color = $h;
 	}
 
 }

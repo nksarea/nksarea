@@ -2,28 +2,22 @@
 
 class file extends base
 {
-
-	private $user;
 	private $data;
 	private $fid;
 
-	public function __construct($user, $fid)
+	public function __construct($fid)
 	{
-//		if (get_class($user) != 'User')
-//			return $this->throwError('$user was not an instance of "User"');
-
-		$this->user = $user;
 		$this->fid = $fid;
 
 		$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
+		if($this->data->dataLength === null)
+			$this->throwError('No file with given fid exists', $this->fid);
 		$this->data = $this->data->dataObj;
 
-		$ok = $user->data->class == $this->data->class
-				|| $user->access_level === 0
-				|| $user->data->id == $this->data->owner;
+		$ok = getUser()->data->id == $this->data->list_owner || getUser()->data->id == $this->data->owner;
 
-		if ($ok)
-			return $this->throwError('$user has no access to the project');;
+		if (!$ok)
+			$this->throwError('$user has no access to the project');;
 	}
 
 	public function __get($name)
@@ -38,7 +32,6 @@ class file extends base
 			case 'upload_time':
 			case 'list':
 			case 'mime':
-			case 'class':
 				return $this->data->$name;
 				break;
 		}
@@ -46,9 +39,11 @@ class file extends base
 
 	public function __set($name, $value)
 	{
+		if(getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0)
+			return;
+
 		switch ($name)
 		{
-			case 'owner':
 			case 'name':
 			case 'mime':
 				getDB()->query('setFile', array('id' => $this->fid, 'field' => $name, 'value' => $value));
@@ -59,28 +54,14 @@ class file extends base
 				$this->data = getDB()->query('refreshData', array('pid' => $this->pid));
 				$this->data = $this->data->dataObj;
 				break;
+			case 'file':
+				if(!is_file(SYS_TMP . $file))
+					$this->throwError ('$value isn`t a file', $value);
+				getRAR()->execute('moveFile', array('source' => SYS_TMP . $value, 'destination' => SYS_SHARE_PROJECTS . $this->fid));
+				break;
 			default:
 				return;
 		}
-	}
-	static function addFile($name, $list, $file)
-	{
-		$query = array();
-		
-		if(!is_string($name))
-			$this->throwError ('$name isn`t a string', $name);
-		if(!is_file(SYS_UPLOAD_FOLDER . $file))
-			$this->throwError ('$file isn`t a file', $file);
-
-		$query['name'] = $name;
-		$query['owner'] = intval($this->user->id);
-		$query['list'] = intval($list);
-		$query['mime'] = mime_content_type($file);
-		
-		if (getDB()->query('addProject', $query))
-			$this->throwError('MYSQLi hates you!');
-
-		return getRAR()->execute('moveFile', array('source' => SYS_UPLOAD_FOLDER . $file, 'destination' => SYS_PROJECT_FOLDER . getDB()->insert_id));
 	}
 	function removeFile()
 	{

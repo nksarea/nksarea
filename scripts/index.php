@@ -10,4 +10,5 @@ if(!preg_match('/^[a-z]*$/', $_GET['lib']) ||
 	exit('report(\'Library "'.$_GET['lib'].'" not found\',5)');
 
 foreach(scandir($_GET['lib'].'.js') as $file)
-	readfile($_GET['lib'].'.js/'.$file);
+	if(is_file($_GET['lib'].'.js/'.$file))
+		readfile($_GET['lib'].'.js/'.$file);

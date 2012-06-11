@@ -72,7 +72,6 @@ class LanguageTemplate extends Template {
 	protected static function translate($string) {
 		$db = getDB();
 		$key = sha1($string);
-
 		if(($res = $db->query('getTranslation', array(
 			'key' => $key,
 			'lang' => self::getLang()

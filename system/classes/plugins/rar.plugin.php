@@ -1,6 +1,6 @@
 <?php
 
-class rar extends base implements plugin
+class rar extends base implements Plugin
 {
 
 	public $methods = array('parseContent');
@@ -50,7 +50,7 @@ class rar extends base implements plugin
 			$path = array_reverse($path);
 
 			foreach ($path as $value)
-				$temp = array($value => $temp);
+				$temp = array(ltrim($value) => $temp);
 
 			$content = array_merge_recursive($temp, $content);
 		}

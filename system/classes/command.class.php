@@ -1,24 +1,6 @@
 <?php
-
-interface plugin
-{
-	public function __construct();
-
-	public function method($name, $par1, $par2, $par3, $par4, $par5);
-
-	public function returnCode($code);
-
-	
-	public function template($template, $input);
-
-	public function throwError($text, $var = NULL);
-
-	public function throwWarning($text);
-}
-
 class command extends base
 {
-
 	private $output;
 	private $plugins = array();
 	private $pluginMethods = array();
@@ -45,7 +27,7 @@ class command extends base
 			include_once(SYS_PLUGIN_FOLDER . $file);
 			$instance = new $class();
 
-			if (!$instance instanceof plugin)
+			if (!$instance instanceof Plugin)
 				continue;
 			$instance->output = &$this->output;
 			foreach ($instance->methods as $value)
@@ -58,7 +40,8 @@ class command extends base
 
 	public function execute($template, $input, $asynchron = false)
 	{
-		$path = SYS_TEMP_FOLDER . uniqid();
+		$this->output = array();
+		$path = SYS_TMP . uniqid();
 		if (!mkdir($path))
 			$this->throwError("Couldn`t create directory", $path);
 
@@ -74,7 +57,7 @@ class command extends base
 
 		if ($asynchron === true)
 		{
-			exec('start cmd.exe ' . $path . '/command.bat');
+			pclose(popen('start "asy" "' . $path . '/command.bat"', "r"));
 			return $path . '/output.txt';
 		}
 		exec($path . '/command.bat', $this->output);

@@ -1,0 +1,1 @@
+UPDATE `projects_info` SET `value`='%{value}%' WHERE `key`='%{key}%' AND `project`='%{pid}%'

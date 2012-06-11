@@ -1,1 +1,0 @@
-SELECT `class` FROM `users` WHERE `id` = '%{owner}%'

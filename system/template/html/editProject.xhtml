@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head></head>
+	<body>
+		<div class ="content">
+			<div class="title" data-input="title">%{projectName}%</div>
+			<div class="box project-box">
+				<div class="image"><img src="styles/icons/%{projectIcon}%"/></div>
+				<table>
+					<colgroup>
+						<col class="head-col"/>
+						<col class="content-col"/>
+						<col class="head-col"/>
+						<col class="content-col"/>
+					</colgroup>
+					<tbody>
+						%{projectHeadContent}%
+					</tbody>
+				</table>
+				<div style="clear:both"></div>
+			</div>
+			<div class="box text-box" id="box1">
+				<div class="title subtitle">Description  Diashow</div>
+				<div class="text" data-input="description">
+					%{projectDescriptionContent}%
+				</div>
+				<div class="slideshow" style="height:512px;" folder="projects">
+					<div class="control left"></div>
+					<div class="slidesContainer">
+					</div>
+					<div class="control right"></div>
+				</div>
+			</div>
+			<div class="box files-box">
+				<div class="head">
+					<div class="path">
+						<div class="text">Power Amp</div>
+						<img src="styles/images/path-separator.png" />
+					</div>
+				</div>
+				<div>
+				<select class="text-right" data-input="version">
+					<option value="%{version}%" selected="true">%{version}%</option>
+					%{versions}%
+				</select>
+				<div class="text-right">
+					Change Version:
+				</div>
+				</div>
+				<div class="message">
+					Drop Files to add new Version
+				</div>
+			</div>
+			<div class="box comment-box">
+				<div class="title subtitle">Comments</div>
+				<div class="element-normal comment">
+					Readymade photo booth messenger bag, sustainable 3 wolf moon mustache fap lomo fanny pack scenester gluten-free brunch seitan. Mixtape photo booth trust fund, fixie mustache portland cosby sweater pitchfork scenester freegan hoodie.
+					<div class="footer">postet by <a>Lorze</a> at <a>10:00</a></div>
+				</div>
+				<div class="element-normal comment" style="margin-left: 60px;">
+					fanny pack scenester gluten-free brunch seitan!!!!!!
+					<div class="footer">postet by <a>Lorze</a> at <a>10:00</a></div>
+				</div>
+				<div class="element-normal comment">
+					Echo park fanny pack four loko, PBR cliche portland lo-fi pitchfork craft beer shoreditch mlkshk dreamcatcher. Leggings hoodie salvia, seitan marfa keytar cardigan VHS four loko tattooed squid mlkshk mustache. Hoodie twee Austin high life jean shorts carles viral. Yr next level twee cred ethical, gentrify before they sold out vinyl mustache fap butcher four loko bicycle rights
+					<div class="footer">postet by <a>Lorze</a> at <a>10:00</a></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

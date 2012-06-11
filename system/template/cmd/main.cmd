@@ -8,4 +8,4 @@ cd "%{temp_dir}%"
 
 echo %error% %errortext%
 cd..
-rem rmdir /S /Q "%{temp_dir}%"
+rmdir /S /Q "%{temp_dir}%"

@@ -5,8 +5,12 @@ error_reporting(E_ALL^E_NOTICE);
 include_once 'system/config.php';
 include_once 'system/functions/autoload.fn.php';
 include_once 'system/functions/getDB.fn.php';
+include_once 'system/functions/getRAR.fn.php';
 include_once 'system/functions/getUser.fn.php';
 include_once 'system/functions/getMethods.fn.php';
+
+//warnungs Variable inizialisieren
+$warning = array();
 
 // Template inizialisieren
 $template = new LanguageTemplate(SYS_UI_TMPL_DIR);
@@ -14,7 +18,8 @@ $template = new LanguageTemplate(SYS_UI_TMPL_DIR);
 // Seite ausführen
 if(empty($_GET['page']))
 	$_GET['page'] = 'index';
-if(preg_match('/^[a-z]+$/', $_GET['page']))
+
+if(preg_match('/^[a-zA-Z]+$/', $_GET['page']))
 	if(is_file(SYS_CNT_DIR.$_GET['page'].'.php'))
 		include(SYS_CNT_DIR.$_GET['page'].'.php');
 	else
@@ -29,7 +34,11 @@ if($template instanceof Template)
 	else {
 		// Für HTML ganzes Dokument laden:
 		//  standard Stylesheet- und Scriptdateien einbinden
-		$template->addCSS('styles/default.css');
+		$template->addCSS('styles/css/main.css');
+		$template->addCSS('styles/css/beta.css');
+		$template->addCSS('styles/css/elements.css');
+		$template->addCSS('styles/css/content.css');
+		$template->addCSS('styles/css/slideshow.css');
 		$template->addJS('scripts/main');
 
 		//  und leere Felder füllen

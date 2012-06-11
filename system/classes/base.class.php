@@ -6,9 +6,9 @@ class base
 	public function template($template, $input)
 	{
 		$matches = array();
-		$end = explode('.', $template);
-		$end = $end[count($end) - 1] . '/';
-		$template = SYS_TEMPLATE_FOLDER . $end . $template;
+		$extension = explode('.', $template);
+		$extension = $extension[count($extension) - 1] . '/';
+		$template = SYS_TEMPLATE_FOLDER . $extension . $template;
 
 		if (!is_array($input))
 			return $this->throwError('$input isn`t an array');
@@ -38,6 +38,17 @@ class base
 				$value = implode($temp, $match[1]);
 				$template = str_replace($matches[0], $value, $template);
 			}
+			if(is_bool($value))
+			{
+				$replace = '';
+
+				if (!preg_match("/\%\¦$key,(.*)\¦\%/", $template, $matches))
+					continue;
+				if($value === true)
+					$replace = $matches[1];
+				
+				$template = str_replace($matches[0], $replace, $template);
+			}
 			else
 			{
 				$template = str_replace('%{' . $key . '}%', $value, $template);
@@ -55,10 +66,10 @@ class base
 			if (!$match)
 				continue;
 
-			$template = str_replace('%|' . $value . '|%', $match, $template);
+			$template = str_replace($matches[0], $match, $template);
 		}
 
-		if (strpos($template, '%{') || strpos($template, '%[') || strpos($template, '%|'))
+		if (strpos($template, '%{') || strpos($template, '%[') || strpos($template, '%|') || strpos($template, '%¦'))
 			return $this->throwError('Not every field in the template had been replaced', $template);
 
 		return $template;
