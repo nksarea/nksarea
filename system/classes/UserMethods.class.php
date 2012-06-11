@@ -155,7 +155,7 @@ class UserMethods extends base implements Methods {
 				break;
 
 			default:
-				return false;
+				return $this->throwError('The type of the object to delete is invalid.');
 		}
 
 		$dbc = getDB();
@@ -166,7 +166,7 @@ class UserMethods extends base implements Methods {
 		$record = $dbc->query('getRecord', array(
 			'table' => $table,
 			'id' => $id
-				));
+		));
 
 		if (!$record->dataLength)
 			return false;
