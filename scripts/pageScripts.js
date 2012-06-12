@@ -10,11 +10,12 @@ $(document).ready(function(){
 		$($('option[value="' + $('option:first', this).val() + '"]', this)[1]).remove();
 	});
 	
-	$('.button').each(function(index){
-		var top = this.parentNode.offsetTop + 20 + index * 60;
-		$(this).css('top', top);
-		$(this).css('background-color', color);
-	});
+	setTimeout(function() {
+		$('.button').each(function(index){
+			var top = this.parentNode.offsetTop + 20 + index * 60;
+			$(this).css('top', top);
+		});
+	},200);
 });
 
 function submit(){
@@ -84,6 +85,24 @@ function changeFolder(path){
 		$(elementOld).attr('class', 'hidden');
 		$(elementOld).css('height', heightOld);
 		$(elementNew).attr('class', 'show');
+	});
+}
+
+function removeComment(){
+	$('.comment').click(function(){
+		$(this).animate({
+			height: '0px'
+		}, 250, function() {
+			var div = document.createElement('div');
+			div.setAttribute('class', 'hidden');
+			div.setAttribute('data-input', 'removeComment');
+			var txt = document.createTextNode($(this).attr('data-id'));
+			div.appendChild(txt);
+			document.body.appendChild(div);
+		
+			$(this).remove();
+			$('.comment').unbind('click');
+		});
 	});
 }
 
