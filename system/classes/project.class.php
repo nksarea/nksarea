@@ -1,10 +1,5 @@
 <?php
 
-define('ORDER_OWNER', 1);
-define('ORDER_NAME', 2);
-define('ORDER_LIST', 3);
-define('ORDER_UPTIME', 4);
-
 class project extends base
 {
 
@@ -13,15 +8,22 @@ class project extends base
 	private $info;
 	private $pid;
 
+	/** Erstellt ein nneues Projekt
+	 *
+	 * @param integer $pid Project ID
+	 * @author Lorze Widmer
+	 */
 	public function __construct($pid)
 	{
 		$this->pid = $pid;
 
+		//Daten werden aus der Datenbank geladen
 		$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
 		if ($this->data === null)
 			$this->throwError('No project with given pid exists', $this->pid);
 		$this->data = $this->data->dataObj;
 
+		//Infos werden aus der Datenbank geladen und in einen assoziativen Array geladen InfoKey => InfoValue
 		$temp = getDB()->query('refreshDataProjectInfo', array('pid' => $this->pid));
 		$this->info = $temp;
 		if ($temp !== null)
@@ -32,11 +34,13 @@ class project extends base
 			while ($temp->next());
 		}
 
+		//Infos werden aus der Datenbank geladen und in einen assoziativen Array geladen InfoKey => InfoValue
 		$fail = (($this->data->access_level == 0) ||
 				($this->data->access_level == 1 && getUser()->access_level == 1) ||
 				($this->data->access_level <= 2 && $this->data->class == getUser()->class && getUser()->access_level == 2) ||
 				($this->data->access_level <= 2 && getUser()->access_level == null)) && $this->data->owner != getUser()->id && getUser()->access_level != 0;
 
+		//Im Fehlerfall wird das Skript abgebrochen und ein Fehler ausgegeben
 		if ($fail)
 			$this->throwError('$user has no access to the project');
 	}
@@ -45,10 +49,12 @@ class project extends base
 	{
 		switch ($name)
 		{
+			//private Eigenschaften
 			case 'pid':
 			case 'info':
 				return $this->$name;
 				break;
+			//Werte aus der Datenbank
 			case 'owner':
 			case 'name':
 			case 'version':
@@ -59,6 +65,7 @@ class project extends base
 			case 'list':
 				return $this->data->$name;
 				break;
+			//privet Funktionen
 			case 'versions':
 				return $this->getVersions();
 				break;
@@ -67,11 +74,13 @@ class project extends base
 
 	public function __set($name, $value)
 	{
+		//Berechtigungen werden überprüft
 		if (getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0)
 			return;
 
 		switch ($name)
 		{
+			//Werte der Dantenbank die keinen refresh benötigen, weil nur ein Wert gesetzt wird
 			case 'name':
 			case 'description':
 			case 'access_level':
@@ -79,11 +88,13 @@ class project extends base
 				getDB()->query('setProject', array('id' => $this->pid, 'field' => $name, 'value' => $value));
 				$this->data->$name = $value;
 				break;
+			//Werte der Dantenbank die einen refresh benötigen, weil mehrere Werte gesetzt werden
 			case 'owner':
 				getDB()->query('setProject', array('id' => $this->pid, 'field' => $name, 'value' => $value));
 				$this->data = getDB()->query('refreshDataP', array('pid' => $this->pid));
 				$this->data = $this->data->dataObj;
 				break;
+			//privet Funktionen
 			case 'icon':
 				$this->setIcon($value);
 				break;
@@ -92,32 +103,54 @@ class project extends base
 		}
 	}
 
+	/** Gibt die Datei/Ordenerstruktur des Projektes zurück. Sie wird
+	 * mithilfe von WinRAR aus der Datei $pid.rar gelesen
+	 *
+	 *  @return mixed array() mit der Datei/Ordenerstruktur, bei keiner Datei/Ordenerstruktur false
+	 * @author Lorze Widmer
+	 */
 	public function viewContent()
 	{
+		//existiert keine RAR-Datei wird ein Fehler ausgegeben
 		if (!is_file(SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('there is no RAR data for the project');
 
+		//das Template wird gefüllt und ausgeführt
 		getRAR()->execute('viewContent', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar'));
+		//mithilfe des Pluginsystemes wird die Datei/Ordenerstruktur ausgegeben
 		return getRAR()->plugin('rar_parseContent');
 	}
-
+	/** Das ganze Projekt oder nur eine Datei wird zum Downlaod vorbereitet.
+	 *
+	 * @param string	$mask Gibt an wenn nur ein File ausgepackt und zum
+	 *					Download vorbereitet wird oder ob das ganze Projekt
+	 *					vorbereitet wird. $mask muss der Filename + den ganzen
+	 *					Pfad in der RAR-Datei sein.
+	 *  @return array mit element pfad (Pfad zur gefragten datei) und name(Name der Datei)
+	 * @author Lorze Widmer
+	 */
 	public function prepareDownload($mask = false)
 	{
+		//Überprüfen der Parameter
 		if (!is_file(SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('there is no RAR data for the project');
 		if (!is_string($mask) && !is_bool($mask))
 			$this->throwError('$filter is not a bool nor a string');
 
+		//ist $mask false wird der Pfade der RAR-Datei des Projektes zurückgegeben
 		if ($mask == false)
 		{
 			return array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'name' => $this->data->name);
 		}
+		//sonst wird die mit $mask angegebene Datei entpackt und der Pfad zurückgegeben
 		else
 		{
+			//um Dateikonflikte zu vermeiden wir der Name der Datei auf eine uniqid gesetzt
 			$path = SYS_TMP . uniqid();
 			$name = explode('\\', $mask);
 			$name = $name[count($name) - 1];
 
+			//die Datei wird entpackt
 			getRAR()->execute('prepareDownload', array('path' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'mask' => $mask, 'name' => $name, 'destination' => $path));
 			return array('path' => $path, 'name' => $name);
 		}
@@ -130,14 +163,18 @@ class project extends base
 
 	public function setVersion($version, $folder = false)
 	{
+		//Überprüfen der Parameter
 		if (preg_match('/^[0-9]+\.[0-9]+\.[0-9]+$/', $version))
 			$this->throwError('$version isn`t a version number', $version);
 
+		//$versionfile ist der pfad zur Versions-Datei in der Form: $pid.rar-v$version
 		$versionFile = SYS_SHARE_PROJECTS . $this->pid . '-v' . $version;
 
+		//das aktuelle File wird in eine Versions-Datei umbenannt
 		if (!rename(SYS_SHARE_PROJECTS . $this->pid . '.rar', SYS_SHARE_PROJECTS . $this->pid . '-v' . $this->data->version))
 			$this->throwError('couldn`t rename file');
 
+		//gibt es $versionfile nicht gibt es die Version nicht und es wird eine neue version erstellt
 		if (!is_file($versionFile))
 		{
 			if (!is_dir(SYS_TMP . $folder))
