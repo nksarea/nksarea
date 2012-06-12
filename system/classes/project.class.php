@@ -43,6 +43,8 @@ class project extends base
 		//Im Fehlerfall wird das Skript abgebrochen und ein Fehler ausgegeben
 		if ($fail)
 			$this->throwError('$user has no access to the project');
+		if (getUser() === false)
+			$this->throwError('You aren`t logged in');
 	}
 
 	public function __get($name)
