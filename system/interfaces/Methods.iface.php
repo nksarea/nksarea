@@ -10,5 +10,5 @@ interface Methods {
 	public function __construct();
 
 	/** Stellt mindestens $this->permitted zur Verüfung */
-	public function __get();
+	public function __get($key);
 }
