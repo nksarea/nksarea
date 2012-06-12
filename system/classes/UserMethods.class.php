@@ -155,7 +155,6 @@ class UserMethods extends base implements Methods
 	}
 
 
-=======
 	/** Bereitet das Löschen eines Objektes (Projekt, Datei, Liste) vor
 	 *
 	 * Diese Funktion entfernt einen Datensatz von einer gegebenen Tabelle und schreibt

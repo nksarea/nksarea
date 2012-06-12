@@ -113,6 +113,7 @@
 /*Files-Box-------------------------------------------------------------------*/
 .content .files-box{
 	padding: 10px 0px 10px 0px;
+	-webkit-user-select: none;
 }
 .content .files-box .head{
 	height:	30px;
@@ -128,6 +129,9 @@
 }
 .content .files-box .head .path .text{
 	padding: 3px 5px 3px 5px;
+	float: left;
+}
+.content .files-box .head .path img{
 	float: left;
 }
 .content .files-box .text-right{
@@ -185,6 +189,7 @@
 /*Result-Box------------------------------------------------------------------*/
 .content .result-box{
 	padding: 10px 0px 10px 0px;
+	-webkit-user-select: none;
 }
 .content .result-box .result{
 	height: 40px;
