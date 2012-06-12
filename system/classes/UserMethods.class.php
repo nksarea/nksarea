@@ -14,7 +14,7 @@ class UserMethods extends base implements Methods
 	public function __construct() {
 		if (!$user = getUser())
 			$this->throwError('You are not permitted to use these functions, because you\'re not logged in.');
-		else if ($user->access_level >= $this->minAccessLevel)
+		else if ($user->access_level > $this->minAccessLevel)
 			$this->throwError('Your access level isn\'t heigh enough to use these methods.');
 		else
 			$this->permitted = true;
