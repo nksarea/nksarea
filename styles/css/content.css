@@ -110,6 +110,19 @@
 }
 /*Project-Box-----------------------------------------------------------------*/
 
+/*List-Box-----------------------------------------------------------------*/
+.content .list-box{
+	padding: 10px 0px 10px 0px;
+}
+.content .list-box table{
+	width: 950px;
+	margin: 0px 0px 0px 0px;
+}
+.content .list-box table span{
+	color: #FF7722;
+}
+/*List-Box-----------------------------------------------------------------*/
+
 /*Files-Box-------------------------------------------------------------------*/
 .content .files-box{
 	padding: 10px 0px 10px 0px;
