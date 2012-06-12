@@ -181,7 +181,7 @@ class UserMethods extends base implements Methods
 				$table = 'projects';
 				break;
 
-			case self::TYPE_List:
+			case self::TYPE_LIST:
 				$table = 'lists';
 				break;
 
