@@ -8,6 +8,9 @@
  * $pl->remove();
  * </code>
  *
+ * Hinweis: diese Klasse konnte nicht "List" genannt werden, da list ein
+ * reserviertes Schlüsselwort ist.
+ *
  * @author Cédric Neukom
  */
 class eList extends base {
@@ -90,17 +93,23 @@ class eList extends base {
 	public function __get($key) {
 		if($this->data !== null && $this->permitted)
 			switch($key) {
-				case 'data':
 				case 'type':
 				case 'permitted':
 					return $this->$key;
-				case 'warning':
-				case 'error':
-					return parent::__get($key);
+
+				case 'id':
+				case 'owner':
+				case 'class':
+					return (int)$this->data->$key;
+
+				case 'name':
+				case 'description':
+				case 'creation_time':
+				case 'deadline':
+					return $this->data->$key;
 			}
 	}
 
-	/** Übernimmt Werte <b>ungeprüft</b>! */
 	public function __set($key, $value) {
 		// Berechtigung prüfen
 		if($this->data !== null && $this->permitted
@@ -111,6 +120,7 @@ class eList extends base {
 				case 'class':
 					$value = intval($value);
 				case 'name':
+				case 'description':
 					getDB()->query('setListValue', array(
 						'key' => $key,
 						'value' => $value,
@@ -144,7 +154,7 @@ class eList extends base {
 				break;
 		}
 
-		$um = new UserMethods(); // UserMethods Objekt erhalten um Liste zu löschen
+		$um = getMethods(); // UserMethods Objekt erhalten um Liste zu löschen
 		if($um->remove(self::TYPE_LIST, $this->data->id)) {
 			// Werte entfernen, da Objekt nicht zerstört werden kann
 			$this->data = null;

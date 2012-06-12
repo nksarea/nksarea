@@ -96,7 +96,7 @@ class CommentList extends base {
 			do {
 				$comment = $result->dataObj;
 				$comment->replies = array();
-				if((int)$result->dataObj->parent)
+				if((int)$result->dataObj->parent && $byID[$result->dataObj->parent])
 					$byID[$result->dataObj->parent]->replies[] = &$comment;
 				else
 					$comments[] = &$comment;

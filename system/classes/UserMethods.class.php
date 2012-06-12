@@ -14,7 +14,7 @@ class UserMethods extends base implements Methods
 	public function __construct() {
 		if (!$user = getUser())
 			$this->throwError('You are not permitted to use these functions, because you\'re not logged in.');
-		else if ($user->access_level >= $this->minAccessLevel)
+		else if ($user->access_level > $this->minAccessLevel)
 			$this->throwError('Your access level isn\'t heigh enough to use these methods.');
 		else
 			$this->permitted = true;
@@ -154,6 +154,58 @@ class UserMethods extends base implements Methods
 		return getRAR()->execute('moveFile', array('source' => SYS_TMP . $file, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id));
 	}
 
+	/** Fügt einen Kommentar zu einem Objekt hinzu.
+	 *
+	 * @param integer $objType eine base::TYPE_ Konstante, die angibt, zu welchem
+	 *					Typ von Objekt der Kommentar hinzugefügt werden soll.
+	 * @param integer $objID die ID des zu kommentierenden Objektes
+	 * @param string $comment der Kommentar (max 1000 Zeichen)
+	 * @param integer $replyTo falls der Kommentar als Antwort auf einen anderen
+	 *					Kommentar verfasst werden soll, die ID dieses Kommentars
+	 *					Die Existenz des übergeordneten Kommentars wird nicht
+	 *					geprüft. Falls es den übergeordneten Kommentar nicht gibt,
+	 *					wird der Kommentar von CommentList behandelt, als wäre
+	 *					der Kommentar keine Antwort auf einen anderen Kommentar.
+	 * @return boolean ob der Kommentar hinzugefügt werden konnte.
+	 * @author Cédric Neukom
+	 */
+	public function addComment($objType, $objID, $comment, $replyTo = 0) {
+		if(!$this->permitted)
+			return false;
+
+		// Parameter validieren
+		$objID = (int)$objID;
+		$replyTo = (int)$replyTo;
+		if(!$objID)
+			return $this->throwError('$objId has to be a valid object id (positive integer value).');
+
+		// Typ validieren
+		switch($objType) {
+			case self::TYPE_PROJECT:
+				$type = 'project';
+				break;
+
+			case self::TYPE_FILE:
+				$type = 'file';
+				break;
+
+			case self::TYPE_LIST:
+				$type = 'list';
+				break;
+
+			default:
+				return $this->throwError('$objType has to be a valid TYPE-Constant. No comment has been added.');
+		}
+
+		// Kommentar in DB eintragen
+		return getDB()->query('addComment', array(
+			'type' => $type,
+			'objId' => $objID,
+			'author' => getUser()->data->id,
+			'comment' => $comment,
+			'replyTo' => $replyTo
+		));
+	}
 
 	/** Bereitet das Löschen eines Objektes (Projekt, Datei, Liste) vor
 	 *
@@ -181,7 +233,7 @@ class UserMethods extends base implements Methods
 				$table = 'projects';
 				break;
 
-			case self::TYPE_List:
+			case self::TYPE_LIST:
 				$table = 'lists';
 				break;
 

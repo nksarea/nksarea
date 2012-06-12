@@ -9,7 +9,7 @@ class GuestMethods extends base implements Methods {
 	protected $permitted;
 
 	public function __construct() {
-		$this->permitted = (bool) getUser();
+		$this->permitted = !getUser();
 	}
 
 	public function __get($key) {
