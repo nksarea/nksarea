@@ -10,8 +10,8 @@ class UserMethods extends base implements Methods
 	protected $permitted = false;
 	protected $minAccessLevel = 2;
 
-	public function __construct()
-	{
+
+	public function __construct() {
 		if (!$user = getUser())
 			$this->throwError('You are not permitted to use these functions, because you\'re not logged in.');
 		else if ($user->access_level >= $this->minAccessLevel)
@@ -20,10 +20,8 @@ class UserMethods extends base implements Methods
 			$this->permitted = true;
 	}
 
-	public function __get($key)
-	{
-		switch ($key)
-		{
+	public function __get($key) {
+		switch ($key) {
 			case 'permitted':
 				return $this->$key;
 		}
@@ -40,9 +38,9 @@ class UserMethods extends base implements Methods
 	 * @return mixed false im Fehlerfalll, andernfalls die ID der Liste
 	 * @author Cédric Neukom
 	 */
-	public static function addList($name, $type, $class, $deadline = null)
-	{
-		if (!getUser())
+
+	public static function addList($name, $type, $class, $deadline = null) {
+		if (!$this->permitted)
 			return $this->throwError('You are not logged in. You can not create a list while you aren\'t logged in.');
 
 		$type = intval($type);
@@ -77,6 +75,7 @@ class UserMethods extends base implements Methods
 		else
 			return $this->throwError('A technical error occurred. The list has not been created.');
 	}
+
 
 	/** Erstellt ein nneues Projekt
 	 *
@@ -121,6 +120,7 @@ class UserMethods extends base implements Methods
 		return getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id . '.rar'));
 	}
 
+
 	/** Erstellt ein neues File
 	 *
 	 * @param string $name Name des Projekts
@@ -145,6 +145,7 @@ class UserMethods extends base implements Methods
 		$query['list'] = intval($list);
 		$query['mime'] = mime_content_type($file);
 
+
 		//template wird gefüllt und ausgeführt
 		if (getDB()->query('addProject', $query))
 			$this->throwError('MYSQLi hates you!');
@@ -153,4 +154,78 @@ class UserMethods extends base implements Methods
 		return getRAR()->execute('moveFile', array('source' => SYS_TMP . $file, 'destination' => SYS_SHARE_PROJECTS . getDB()->insert_id));
 	}
 
+
+=======
+	/** Bereitet das Löschen eines Objektes (Projekt, Datei, Liste) vor
+	 *
+	 * Diese Funktion entfernt einen Datensatz von einer gegebenen Tabelle und schreibt
+	 * ihn in die Lösch-Datei. Ein externes Programm wird diese Datei und die darin
+	 * aufgelisteten Dateien herunterladen (in Form einer Sicherungskopie) und löschen.
+	 *
+	 * Diese Funktion prüft die Berechtigung anhand des owner Feldes in der Datenbank.
+	 * Nur der Eigentümer eines Datensatzes und Administratoren dürfen Datensätze löschen.
+	 *
+	 * @param integer $what eine base::TYPE_ Konstante, die angibt, von welcher Tabelle
+	 * 				gelöscht werden soll
+	 * @param integer $id die ID des zu löschenden Eintrags
+	 * @return boolean Im Erfolgsfall true, andernfalls false
+	 * @author Cédric Neukom
+	 */
+	public function remove($what, $id) {
+		// Prüfen, ob Benutzer eingeloggt
+		if (!$this->permitted)
+			return $this->throwError('You are not logged in. You can not remove things without being logged in.');
+
+		// Löschen von Tabelle ...
+		switch ($what) {
+			case self::TYPE_PROJECT:
+				$table = 'projects';
+				break;
+
+			case self::TYPE_List:
+				$table = 'lists';
+				break;
+
+			case self::TYPE_FILE:
+				$table = 'files';
+				break;
+
+			default:
+				return $this->throwError('The type of the object to delete is invalid.');
+		}
+
+		$dbc = getDB();
+		if (!$dbc instanceof dbc)
+			return false;
+
+		// zu löschenden Datensatz auslesen
+		$record = $dbc->query('getRecord', array(
+			'table' => $table,
+			'id' => $id
+		));
+
+		if (!$record->dataLength)
+			return false;
+
+		$record = $record->dataAssoc;
+		if ($record['owner'] == getUser()->data->id || // Eigentümer
+				getUser()->access_level == 0) { // Admin
+			// Datensatz ins Löschfile schreiben
+			$record = array_reverse($record);
+			$record[] = $table;
+			$record = array_reverse($record);
+
+			if (!$tf = fopen(SYS_TRASH_FILE, 'a'))
+				return false;
+			fputcsv($tf, $record);
+			fclose($tf);
+
+			// Datensatz von Tabelle löschen
+			return $dbc->query('removeRecord', array(
+						'table' => $table,
+						'id' => $id
+					));
+		}
+		return false;
+	}
 }

@@ -2,6 +2,11 @@
 
 class base
 {
+	// Typ-Konstanten, werden bei polyfunktionellen Funktionen gebraucht, um den
+	// Typ des zu behandelnden Objektes anzugeben
+	const TYPE_PROJECT = 1;
+	const TYPE_FILE = 2;
+	const TYPE_LIST = 3;
 
 	public function template($template, $input)
 	{
