@@ -1,2 +1,3 @@
 RewriteEngine On
 RewriteRule ^([a-zA-Z]*)$ index.php?page=$1 [QSA]
+RewriteRule ^upload$ upload.php [QSA]

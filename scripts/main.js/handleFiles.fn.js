@@ -1,3 +1,11 @@
+/*
+ * Verarbeitet Dateiuploads. (Wenn Dateien auf eine inizialisierte FDA gezogen
+ * wurden). Die Dateien werden unter Berücksichtigung der FDA-Attribute mit einer
+ * Fortschrittsanzeige hochgeladen.
+ *
+ * @param e Event Objekt
+ * @author Cédric Neukom
+ */
 function handleFiles(e) {
 	// Eventweiterverarbeitung unterbinden
 	if(e.preventDefault) {
@@ -38,7 +46,7 @@ function handleFiles(e) {
 								box.classList.add('complete');
 								break;
 							default:
-								reportFileBox(box, "An error occurred.", 4);
+								reportFileBox(box, xhr.responseText, 4);
 						}
 
 						// Callback ausfürhen
