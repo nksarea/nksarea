@@ -5,7 +5,7 @@ if ($template instanceof Template)
 {
 	if (!empty($_GET['pid']))
 	{
-		$project = new project($_POST['pid']);
+		$project = new project($_GET['pid']);
 		if(!empty($_POST['description']) && strlen($_POST['description']) <= 2048)
 		{
 			$_POST['description'] = strip_tags($_POST['description']);

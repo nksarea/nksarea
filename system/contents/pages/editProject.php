@@ -1,4 +1,6 @@
 <?php
+getUser('admin', 'test');
+
 if ($template instanceof Template)
 {
 	if (!empty($_GET['pid']))
