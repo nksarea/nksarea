@@ -43,13 +43,12 @@ function submit(path){
 	});
 
 	var post = '';
-	for(var i in submit) {
+	for(var i in submit)
 		if(typeof submit[i] == 'object')
-			submit[i] = submit[i].join('&'+i+'[]='+encodeURIComponent(String));
+			for(var n = 0; n < submit[i].length; n++)
+				post += '&'+i+'[]='+encodeURIComponent(submit[i][n]);
 		else
-			submit[i] = encodeURIComponent(submit[i]);
-		post += '&'+i+'='+submit[i];
-	}
+			post += '&'+i+'='+encodeURIComponent(submit[i]);
 
 	loadContent(path, post.substr(1));
 }
