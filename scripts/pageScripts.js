@@ -22,7 +22,7 @@ $(document).ready(function(){
 	},50);
 });
 
-function submit(){
+function submit(path){
 	var submit = new Object();
 	
 	$('div[data-input]').each(function(){
@@ -45,8 +45,16 @@ function submit(){
 		else
 			submit[id] = $('option:selected', this).val();
 	});
-	
-	alert(submit);
+
+	var post = '';
+	for(var i in submit)
+		if(typeof submit[i] == 'object')
+			for(var n = 0; n < submit[i].length; n++)
+				post += '&'+i+'[]='+encodeURIComponent(submit[i][n]);
+		else
+			post += '&'+i+'='+encodeURIComponent(submit[i]);
+
+	loadContent(path, post.substr(1));
 }
 
 function changeFolder(path){

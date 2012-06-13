@@ -1,11 +1,12 @@
 /*
  * Lädt Inhalt nach.
  *
- * @param e Pfad, HTMLElement oder Event
+ * @param evt Pfad, HTMLElement oder Event
  * @param post POST-Inhalte, falls nicht gesetzt, ein GET Request wird ausgeführt
  * @param ct Content-Type Header, falls nicht gesetzt, aber POST Request:
  *						application/x-www-form-urlencoded
  * @author Cédric Neukom
+ * @todo css/color-***.css entfernen
  */
 function loadContent(evt, post, ct) {
 	var e;
