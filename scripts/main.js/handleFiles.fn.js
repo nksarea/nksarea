@@ -43,7 +43,7 @@ function handleFiles(e) {
 
 						// Callback ausfürhen
 						if(e.target.dataset.fdaCallback) {
-							var r = eval(e.target.dataSet);
+							var r = eval(e.target.dataset.fdaCallback);
 							// Wenn Rückgabewert eine Funktion ist, führe diese aus
 							// damit wird folgende Schreibweise möglich:
 							//  <div data-fda-callback="myCallbackFunction" ...>
@@ -60,6 +60,14 @@ function handleFiles(e) {
 						progress.max = e2.total;
 						progress.value = e2.loaded;
 					}
+				}
+
+				// CallfirstFunktion ausführen, vor dem Absenden
+				if(e.target.dataset.fdaCallfirst) {
+					var r = eval(e.target.dataset.fdaCallfirst);
+					// siehe callback
+					if(typeof r == 'function')
+						r(e, e.dataTransfer.files[i], xhr);
 				}
 
 				// Request absenden: Datei hochladen
