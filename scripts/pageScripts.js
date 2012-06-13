@@ -1,8 +1,12 @@
 $(document).ready(function(){ 
-	
 	if($('[data-path="/"]').length == 1)
 		changeFolder('/');
 	
+	$('[data-reply]').each(function(){
+		var margin = $('[data-id="' + $(this).attr('data-reply') + '"]').css('margin-left');
+		margin = parseInt(margin.replace('px', '')) + 60;
+		$(this).css('margin-left', margin);
+	});
 	$('div[data-input]').each(function(){
 		this.contentEditable = 'true';
 	});
@@ -15,7 +19,7 @@ $(document).ready(function(){
 			var top = this.parentNode.offsetTop + 20 + index * 60;
 			$(this).css('top', top);
 		});
-	},200);
+	},50);
 });
 
 function submit(){
@@ -88,21 +92,23 @@ function changeFolder(path){
 	});
 }
 
-function removeComment(){
-	$('.comment').click(function(){
-		$(this).animate({
-			height: '0px'
-		}, 250, function() {
-			var div = document.createElement('div');
-			div.setAttribute('class', 'hidden');
-			div.setAttribute('data-input', 'removeComment');
-			var txt = document.createTextNode($(this).attr('data-id'));
-			div.appendChild(txt);
-			document.body.appendChild(div);
+function removeComment(comment){
+	$('[data-reply="' + $(comment).attr('data-id') + '"]').each(function(){
+			removeComment(this);
+	});
+
+	$(comment).animate({
+		height: '0px'
+	}, 250, function() {
+		var div = document.createElement('div');
+		div.setAttribute('class', 'hidden');
+		div.setAttribute('data-input', 'removeComment');
+		var txt = document.createTextNode($(this).attr('data-id'));
+		div.appendChild(txt);
+		document.body.appendChild(div);
 		
-			$(this).remove();
-			$('.comment').unbind('click');
-		});
+		$(this).remove();
+		$('.comment').unbind('click');
 	});
 }
 
