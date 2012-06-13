@@ -18,7 +18,7 @@ $(document).ready(function(){
 	},200);
 });
 
-function submit(){
+function submit(path){
 	var submit = new Object();
 	
 	$('div[data-input]').each(function(){
@@ -41,8 +41,17 @@ function submit(){
 		else
 			submit[id] = $('option:selected', this).val();
 	});
-	
-	alert(submit);
+
+	var post = '';
+	for(var i in submit) {
+		if(typeof submit[i] == 'object')
+			submit[i] = submit[i].join('&'+i+'[]='+encodeURIComponent(String));
+		else
+			submit[i] = encodeURIComponent(submit[i]);
+		post += '&'+i+'='+submit[i];
+	}
+
+	loadContent(path, post.substr(1));
 }
 
 function changeFolder(path){
