@@ -1,19 +1,6 @@
 root { 
     display: block;
 }
-.rightnav{
-	-webkit-transform: rotate(90deg);
-	-webkit-transform-origin: top right;
-	position: absolute;
-	
-	text-align: left;
-	
-	width: 500px;
-	height: 20px;
-	
-	top: 608px;
-	right: 0;
-}
 .leftnav{
 	-webkit-transform: rotate(-90deg);
 	-webkit-transform-origin: top left;
@@ -21,16 +8,16 @@ root {
 
 	text-align: right;
 	
-	width: 500px;
+	width: 1000px;
 	height: 20px;
 	
-	top: 608px;
+	top: 1108px;
 	left: 0;
 }
-.rightnav a{
-	margin: 0px 10px 0px 0px;
+.leftnav a{
+	margin: 0px 10px 0px 10px;
 	
-	font-family: Droid Sans-serif;
+	font-family: "Droid Sans", sans-serif;
 	font-size: 20px;
 	text-align: right;
 	text-transform: uppercase;
