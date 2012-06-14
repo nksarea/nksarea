@@ -35,7 +35,6 @@ if($template instanceof Template)
 		// Für HTML ganzes Dokument laden:
 		//  standard Stylesheet- und Scriptdateien einbinden
 		$template->addCSS('styles/css/main.css');
-		$template->addCSS('styles/css/beta.css');
 		$template->addCSS('styles/css/elements.css');
 		$template->addCSS('styles/css/content.css');
 		$template->addCSS('styles/css/slideshow.css');

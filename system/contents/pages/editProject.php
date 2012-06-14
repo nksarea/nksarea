@@ -11,6 +11,7 @@ if ($template instanceof Template)
 
 		$projectTemplate->assign('name', $project->name);
 		$projectTemplate->assign('icon', $project->pid . '.jpg');
+		$projectTemplate->assign('pid', $project->pid);
 		$template->addJS('http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js');
 		$template->addJS('scripts/pageScripts.js');
 		$template->addCSS('styles/css/color-' . $project->color . '.css');
