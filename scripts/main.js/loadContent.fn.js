@@ -61,11 +61,15 @@ function loadContent(evt, post, ct) {
 	// Antwort verarbeiten
 	switch(xhr.status) {
 		case 200: // OK
+			// color-Stylesheets sind nur je für ein Dokument gültig: entferne sie
+			var a;
+			while((a = document.querySelector('link[href^="styles/css/color-"]')))
+				a.parentNode.removeChild(a);
+
 			// Update übernehmen
 			var x = xhr.responseXML.rootElement ?
 			xhr.responseXML.rootElement : // IE 8
 			xhr.responseXML.documentElement.childNodes;
-			var a;
 
 			for(var i = 0; i < x.length; i++)
 				switch(x[i].tagName) {
