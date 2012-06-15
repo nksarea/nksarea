@@ -7,6 +7,7 @@ class project extends base
 	private $versions;
 	private $info;
 	private $pid;
+	private $editable;
 
 	/** Erstellt ein nneues Projekt
 	 *
@@ -39,6 +40,9 @@ class project extends base
 				($this->data->access_level == 1 && getUser()->access_level == 1) ||
 				($this->data->access_level <= 2 && $this->data->class == getUser()->class && getUser()->access_level == 2) ||
 				($this->data->access_level <= 2 && getUser()->access_level == null)) && $this->data->owner != getUser()->id && getUser()->access_level != 0;
+
+		//Ist der Benutzer berechtigt das Projekt zu bearbeiten wird $this->editable auf true gesetzt
+		$this->editable = getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0;
 
 		//Im Fehlerfall wird das Skript abgebrochen und ein Fehler ausgegeben
 		if ($fail)
@@ -77,7 +81,7 @@ class project extends base
 	public function __set($name, $value)
 	{
 		//Berechtigungen werden überprüft
-		if (getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0)
+		if (!$this->editable)
 			return;
 
 		switch ($name)
@@ -122,12 +126,13 @@ class project extends base
 		//mithilfe des Pluginsystemes wird die Datei/Ordenerstruktur ausgegeben
 		return getRAR()->plugin('rar_parseContent');
 	}
+
 	/** Das ganze Projekt oder nur eine Datei wird zum Downlaod vorbereitet.
 	 *
 	 * @param string	$mask Gibt an wenn nur ein File ausgepackt und zum
-	 *					Download vorbereitet wird oder ob das ganze Projekt
-	 *					vorbereitet wird. $mask muss der Filename + den ganzen
-	 *					Pfad in der RAR-Datei sein.
+	 * 					Download vorbereitet wird oder ob das ganze Projekt
+	 * 					vorbereitet wird. $mask muss der Filename + den ganzen
+	 * 					Pfad in der RAR-Datei sein.
 	 *  @return array mit element pfad (Pfad zur gefragten datei) und name(Name der Datei)
 	 * @author Lorze Widmer
 	 */
@@ -138,7 +143,7 @@ class project extends base
 			$this->throwError('there is no RAR data for the project');
 		if (!is_string($mask) && !is_bool($mask))
 			$this->throwError('$filter is not a bool nor a string');
-
+			
 		//ist $mask false wird der Pfade der RAR-Datei des Projektes zurückgegeben
 		if ($mask == false)
 		{
@@ -158,13 +163,61 @@ class project extends base
 		}
 	}
 
+	/** Das Projekt wird mithilfe der remmove Funktion gelöscht
+	 *
+	 * @return bool true, false im Fehlerfall
+	 * @author Lorze Widmer
+	 */
 	public function removeProject()
 	{
-		//@todo
+		//Berechtigungen werden überprüft
+		if (!$this->editable)
+			return;
+		
+		//Die Hauptdatei $pid.rar wird gepackt
+		if(!getRAR()->execute('addFile', array('source' => SYS_SHARE_PROJECTS . $this->pid . '.rar', 'destination' => SYS_TRASH_FOLDER . 'projects.rar')))
+			return $this->throwError('A technical error occurred. The Project couldn`t be removed because of you >:(');
+		
+		//Alle Versionsdateien werden gepackt
+		foreach($this->getVersions() as $value)
+		{
+			$path = SYS_SHARE_PROJECTS . $this->pid . '-v' . $value;
+			if(!is_file($path))
+				continue;
+			
+			if(!getRAR()->execute('addFile', array('source' => $path, 'destination' => SYS_TRASH_FOLDER . 'projects.rar')))
+				return $this->throwError('A technical error occurred. The Project couldn`t be removed because of you >:(');
+		}
+
+		//Datenbankeinträge werden gelöscht
+		if (getMethods()->remove(self::TYPE_PROJECT, $this->pid))
+		{
+			// Werte entfernen, da Objekt nicht zerstört werden kann
+			$this->data = null;
+			$this->pid = NULL;
+			$this->info = null;
+			$this->editable = false;
+			$this->versions = null;
+			return true;
+		}
+		return $this->throwError('A technical error occurred. The list has not been removed.');
 	}
 
+	/** Eine neue Version der Dateien des Projekts wird erstellt oder die
+	 * Dateien auf eine andere Version gesetzt
+	 *
+	 * @param int $version der name der Version im format xxx.x.x
+	 * @param mixed $folder gibt es die Version noch nicht muss ein Pfad
+	 * 				für die Dateien dieser Version angegeben werden
+	 * @return bool true, false im Fehlerfall
+	 * @author Lorze Widmer
+	 */
 	public function setVersion($version, $folder = false)
 	{
+		//Berechtigungen werden überprüft
+		if (!$this->editable)
+			return false;
+
 		//Überprüfen der Parameter
 		if (preg_match('/^[0-9]+\.[0-9]+\.[0-9]+$/', $version))
 			$this->throwError('$version isn`t a version number', $version);
@@ -179,51 +232,76 @@ class project extends base
 		//gibt es $versionfile nicht gibt es die Version nicht und es wird eine neue version erstellt
 		if (!is_file($versionFile))
 		{
+			//Ordner wird gepackt
 			if (!is_dir(SYS_TMP . $folder))
 				$this->throwError('$version isn`t currently present');
 			getRAR()->execute('packProject', array('source' => SYS_TMP . $folder, 'destination' => $versionFile));
 			$this->versions[] = $version;
-//			Sorting array ->
 		}
 
 		$this->data->version = $version;
 		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'version', 'value' => $version));
 
+		//die Versionsdatei wird in $pid.rar umbenannt
 		if (!rename($versionFile, SYS_SHARE_PROJECTS . $this->pid . '.rar'))
 			$this->throwError('couldn`t rename file');
 		return true;
 	}
 
+	/** Eine Information wird geändert, gelöscht oder erstellt
+	 *
+	 * @param string $key der Titel der Information
+	 * @param mixed $value der Wert der Information
+	 * @return bool true, false im Fehlerfall
+	 * @author Lorze Widmer
+	 */
 	public function setInfo($key, $value)
 	{
+		//Berechtigungen werden überprüft
+		if (!$this->editable)
+			return false;
+
+		//Parameter werden überprüft
 		if (!is_string($key))
 			$this->throwError('$key isn`t a string', $key);
 		if (!is_string($value) && $value !== NULL)
 			$this->throwError('$value isn`t a string nor NULL', $value);
 
+		//ist $value NULL, wird diese Information gelöscht
 		if ($value === NULL)
 		{
+			//Information wird gelöscht
 			getDB()->query('removeProjectInfo', array('pid' => $this->pid, 'key' => $key));
 			if (getDB()->affected_rows === 0)
 				return false;
 			unset($this->info[$key]);
 			return true;
 		}
+		//Ist die Information nicht vorhanden wird sie in der Datenbank neu gesetzt
 		else if (!is_array($this->info) || empty($this->info[$key]))
 			getDB()->query('addProjectInfo', array('pid' => $this->pid, 'key' => $key, 'value' => $value));
+		//Ist die Information vorhanden wir sie in der Datenbank geupdated
 		else
 			getDB()->query('setProjectInfo', array('pid' => $this->pid, 'key' => $key, 'value' => $value));
 		$this->info[$key] = $value;
 		return true;
 	}
 
+	/** Alle existierenden Versionen werden ausgelesen und als Array ausgegeben
+	 * die Informationen werden gecached
+	 *
+	 * @return array mit allen existierenden Versionen
+	 * @author Lorze Widmer
+	 */
 	private function getVersions()
 	{
+		//wurden schon einmal die versionen ausgelesen wird das nicht noch einmal gemacht
 		if (is_array($this->versions))
 			return $this->versions;
 
 		$this->versions = array($this->data->version);
 
+		//der Projektordner wir ausgelesen und alle versionen gecached
 		$dir = opendir(SYS_SHARE_PROJECTS);
 		while (($file = readdir($dir)) !== false)
 		{
@@ -233,18 +311,27 @@ class project extends base
 			$this->versions[] = str_replace($this->pid . '-v', '', $file);
 		}
 		closedir($dir);
-
-//		Sorting array ->
 		return $this->versions;
 	}
 
+	/** Eine Neues Bild wird für das Projekt erstellt und der Farbton des
+	 *  Projektes auf die Durchschnittsfarbe gesetzt. Die Durschnittsfarbe wird
+	 *  im HSL Farbraum ausgegeben damit im Design die reine Farbe verwendet
+	 *  wird ohne Helligkeit und Sättigung.
+	 *
+	 * @param string $file der Dateiname des neuen Icons
+	 * @return bool true, false im Fehlerfall
+	 * @author Lorze Widmer
+	 */
 	private function setIcon($file)
 	{
+		//Parameter werden überprüft
 		if (!is_file(SYS_TMP . $file))
 			$this->throwError('$file isn`t a file');
 		if (!$type = getimagesize(SYS_TMP . $file))
 			$this->throwError('GD couldn`t read this image file');
 
+		//image objekt wird erstellt
 		switch ($type)
 		{
 			case "1":
@@ -263,12 +350,16 @@ class project extends base
 		$width = imagesx($imorig);
 		$height = imagesy($imorig);
 
+		//ein neues 1x1 px grosses Bild wird erstellt
 		$im = imagecreatetruecolor(1, 1);
+		//das originalbild wird auf 1x1 px verkleinert und in $im kopiert
 		imagecopyresampled($im, $imorig, 0, 0, 0, 0, 1, 1, $width, $height);
 
+		//der Farbton dieses Pixels wir in RGB umgewandelt
 		$rgb = imagecolorat($im, 0, 0);
 		$rgb = imagecolorsforindex($im, $rgb);
 
+		//RGB wird in den HSL Farbraumkonvertiert (allgemeine konvertierungsfunktion von mir in PHP übersetzt)
 		$r = $rgb['red'] / 255;
 		$g = $rgb['green'] / 255;
 		$b = $rgb['blue'] / 255;
@@ -298,11 +389,13 @@ class project extends base
 				if ($h < 0)
 					$h += 360;
 		}
+		//Das bild wird verkleinert und gespeichert
 		$im = imagecreatetruecolor(196, 196);
 		imagecopyresampled($im, $imorig, 0, 0, 0, 0, 196, 196, $width, $height);
 		if (!imagejpeg($im, SYS_ICON_FOLDER . $this->pid . '.jpg'))
 			$this->throwError('even your filesystem hates you and won`t save your image');
 
+		//Das color Feld wird auf den Farbton des einen Pixels gesetzt
 		getDB()->query('setProject', array('id' => $this->pid, 'field' => 'color', 'value' => $h));
 		$this->data->color = $h;
 	}

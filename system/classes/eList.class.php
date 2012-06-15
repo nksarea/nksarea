@@ -165,4 +165,36 @@ class eList extends base {
 		return $this->throwError('A technical error occurred. The list has not been removed.');
 	}
 
+		/** Das ganze Projekt oder nur eine Datei wird zum Downlaod vorbereitet.
+	 *
+	 * @param string	$mask Gibt an wenn nur ein File ausgepackt und zum
+	 * 					Download vorbereitet wird oder ob das ganze Projekt
+	 * 					vorbereitet wird. $mask muss der Filename + den ganzen
+	 * 					Pfad in der RAR-Datei sein.
+	 *  @return array mit element pfad (Pfad zur gefragten datei) und name(Name der Datei)
+	 * @author Lorze Widmer
+	 */
+	public function prepareDownload()
+	{
+		$folder = uniqid() . '.rar'; 
+		$projects = getDB()->query('getProjectsList', array('list' => $this->data->id));
+		if($projects === NULL)
+			return false;
+		//sonst wird die mit $mask angegebene Datei entpackt und der Pfad zurückgegeben
+		$createFolder = array(); $packProject = array();
+		
+		do
+		{
+			$createFolder[] = $projects->dataObj->name;
+			if(is_file(SYS_SHARE_PROJECTS . $projects->dataObj->id . '.rar'))
+				$packProject[$projects->dataObj->name] = SYS_SHARE_PROJECTS . $projects->dataObj->id . '.rar';
+		} while ($projects->next());
+		var_dump($createFolder);
+		var_dump($packProject);
+		
+		if(!getRAR()->execute('packList', array('packProject' => $packProject, 'createFolder' => $createFolder, 'path' => SYS_TMP . $folder)))
+			$this->throwError('WinRAR failed to pack the list');
+		
+		return $folder;
+	}
 }

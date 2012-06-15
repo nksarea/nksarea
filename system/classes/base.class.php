@@ -30,10 +30,11 @@ class base
 		{
 			if (is_array($value))
 			{
-				if (!preg_match("/\%\[$key,(.*)\]\%/", $template, $matches))
+				if (!preg_match("/\%\[$key,(.*)\]\%/s", $template, $matches))
 					continue;
 
 				$match = explode(',', $matches[1]);
+				var_dump($match);
 				if (!is_array($match) || count($match) != 2)
 					continue;
 
