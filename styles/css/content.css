@@ -72,6 +72,24 @@
 .content .text-box .text{
 	padding: 0px 20px 0px 20px;
 }
+.content .text-box .text .file-area{
+	background-color: white;
+	text-align: center;
+	line-height: 70px;
+	margin: 0px 0px 10px 0px;
+	border: solid 2px #F72;
+	
+	font-family: "Droid Sans",sans-serif;
+	font-size: 30px;
+	font-variant: small-caps;
+	color: #CCCCCC;
+}
+.content .text-box .text input{
+	margin-bottom: 10px;
+}
+.content .text-box .text select{
+	margin: 0px 20px 0px 5px;
+}
 /*Text-Box--------------------------------------------------------------------*/
 
 /*Comment-Box-----------------------------------------------------------------*/
@@ -204,11 +222,18 @@
 	padding: 10px 0px 10px 0px;
 	-webkit-user-select: none;
 }
+.content .result-box .subtitle{
+	margin-bottom: 10px;
+}
 .content .result-box .result{
 	height: 40px;
-	padding: 0px 5px 0px 5px;
+	padding: 5px 5px 5px 5px;
+	margin-top: 0px;
 
 	border-color: #333333;
+}
+.content .result-box .result:nth-child(odd){
+	background-color: #EFEFEF;
 }
 .content .result-box .result img{
 	width: 40px;

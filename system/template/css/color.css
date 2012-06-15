@@ -53,6 +53,12 @@ a{
 .button{
 	background-color: hsl(%{color}%, 100%, 30%) !important;
 }
+.content .text-box .text .file-area{
+	border-color: hsl(%{color}%, 100%, 30%) !important;
+}
 form input[type="text"]{
 	border-color: hsl(%{color}%, 100%, 30%) !important;
+}
+form input[type="submit"]{
+	background-color: hsl(%{color}%, 100%, 30%) !important;
 }

@@ -1,0 +1,1 @@
+%|winRAR.cmd, a -ep1 "%{destination}%" "%{source}%"|%

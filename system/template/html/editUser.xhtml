@@ -1,0 +1,86 @@
+<div class="title" data-input="title">%{name}%</div>
+<div class="box list-box">
+	<table>
+		<colgroup>
+			<col class="head-col"/>
+			<col class="double-col"/>
+			<col class="head-col"/>
+			<col class="content-col"/>
+		</colgroup>
+		<tbody>
+			%{infoTable}%
+		</tbody>
+	</table>
+	<div style="clear:both"></div>
+</div>
+
+<div class="box result-box" id="box1">
+	<div class="title subtitle">Projects</div>
+	%{projects}%
+</div>
+
+<div class="box result-box">
+	<div class="title subtitle">Lists</div>
+	%{lists}%
+</div>
+
+<div class="box text-box">
+	<div class="title subtitle">Change Password</div>
+	<form action="user" method="post">
+		<div class="text">
+			Password:
+			<input type="text" name="password"/>
+			Repeat Password:
+			<input type="text" name="password"/>
+			<input type="submit" />
+			<div style="clear:both"></div>
+		</div>
+	</form>
+</div>
+
+<div class="box text-box">
+	<div class="title subtitle">Add Project</div>
+	<form action="editProject" method="post">
+		<div class="text">
+			Name:
+			<input type="text" name="name"/>
+			<div class="file-area">
+				Drop Files to add Data
+			</div>
+			Access Level:
+			<select name="accessLevel">
+				<option value="0">Private</option>
+				<option value="1">Class without Teacher</option>
+				<option value="2">Class with Teacher</option>
+				<option value="3">All registered Users</option>
+				<option value="4">All</option>
+			</select>
+			<input type="submit" />
+			<div style="clear:both"></div>
+		</div>
+	</form>
+</div>
+
+<div class="box text-box">
+	<div class="title subtitle">Add List</div>
+	<form action="">
+		<div class="text">
+			Name:
+			<input type="text" />
+			Class:
+			<select>
+				<option>G2010E</option>
+				<option>G2011E</option>
+				<option>G2012E</option>
+				<option>G2013E</option>
+			</select>
+			Type:
+			<select>
+				<option value="0">Project List</option>
+				<option value="0">Test List</option>
+			</select>
+			<input type="submit" />
+			<div style="clear:both"></div>
+		</div>
+	</form>
+</div>

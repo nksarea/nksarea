@@ -39,7 +39,7 @@ class UserMethods extends base implements Methods
 	 * @author Cédric Neukom
 	 */
 
-	public static function addList($name, $type, $class, $deadline = null) {
+	public function addList($name, $type, $class, $deadline = null) {
 		if (!$this->permitted)
 			return $this->throwError('You are not logged in. You can not create a list while you aren\'t logged in.');
 
@@ -105,7 +105,7 @@ class UserMethods extends base implements Methods
 			$this->throwError('$list isn`t a string nor NULL');
 
 		//input für das sql-Template wird zusammengesetzt
-		$query['owner'] = intval(getUser()->id);
+		$query['owner'] = intval(getUser()->data->id);
 		$query['name'] = $name;
 		$query['description'] = ($description === null ? 'NULL' : $description);
 		$query['access_level'] = $access_level;

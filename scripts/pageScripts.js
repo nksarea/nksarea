@@ -13,11 +13,22 @@ $(document).ready(function(){
 	$('select').each(function(){
 		$($('option[value="' + $('option:first', this).val() + '"]', this)[1]).remove();
 	});
+	$('.result-box').each(function(){
+		if($('.result', this).length == 0)
+			$(this).remove();
+	});
 	
 	setTimeout(function() {
+		var i = 0;
+		var parent;
+		
 		$('.button').each(function(index){
-			var top = this.parentNode.offsetTop + 20 + index * 60;
+			if($(this).parent().attr('class') != parent)
+				i = 0;
+			parent = $(this).parent().attr('class');
+			var top = this.parentNode.offsetTop + 20 + i * 60;
 			$(this).css('top', top);
+			i += 1;
 		});
 	},50);
 });
@@ -102,7 +113,7 @@ function changeFolder(path){
 
 function removeComment(comment){
 	$('[data-reply="' + $(comment).attr('data-id') + '"]').each(function(){
-			removeComment(this);
+		removeComment(this);
 	});
 
 	$(comment).animate({
@@ -114,6 +125,14 @@ function removeComment(comment){
 		var txt = document.createTextNode($(this).attr('data-id'));
 		div.appendChild(txt);
 		document.body.appendChild(div);
+		
+		if($('.comment').length == 1){
+			$(this).parent().animate({
+				height: '0px'
+			}, 250, function() {
+				$(this).remove();
+				});
+		}
 		
 		$(this).remove();
 		$('.comment').unbind('click');

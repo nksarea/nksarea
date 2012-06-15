@@ -9,7 +9,7 @@ function getMethods() {
 	/** Methodenobjekt */
 	static $methods;
 
-	if(!is_object($dbc) || !$dbc instanceof Methods) {
+	if(!is_object($methods) || !$methods instanceof Methods) {
 		$user = getUser();
 
 		if($user instanceof User) {

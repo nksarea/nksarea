@@ -1,7 +1,7 @@
 <div class="title" data-input="title">%{name}%</div>
 <div class="box project-box">
-	<div class="button"><img src="styles/images/save.png" /></div>
-	<div class="button"><img src="styles/images/delete.png" /></div>
+	<div class="button"><a href="javascript: submit('http://nksarea/project?pid=%{pid}%')"><img src="styles/images/save.png" /></a></div>
+	<div class="button"><a href="user?remove=%pid%&type=0"><img src="styles/images/delete.png" /></a></div>
 	<div class="image"><img src="styles/icons/%{icon}%"/></div>
 	<table>
 		<colgroup>
@@ -16,7 +16,7 @@
 	</table>
 	<div style="clear:both"></div>
 </div>
-<div class="box text-box" id="box1">
+<div class="box text-box">
 	<div class="title subtitle">Description  Diashow</div>
 	<div class="text" data-input="description">
 		%{description}%
