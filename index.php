@@ -40,6 +40,7 @@ if($template instanceof Template)
 		$template->addCSS('styles/css/content.css');
 		$template->addCSS('styles/css/slideshow.css');
 		$template->addJS('scripts/main');
+		$template->addJS('scripts/slideshow');
 
 		//  und leere Felder füllen
 		foreach($template->getEmptyFields() as $emptyField) {
