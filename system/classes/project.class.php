@@ -42,12 +42,12 @@ class project extends base
 				($this->data->access_level <= 2 && getUser()->access_level == null)) && $this->data->owner != getUser()->id && getUser()->access_level != 0;
 
 		//Ist der Benutzer berechtigt das Projekt zu bearbeiten wird $this->editable auf true gesetzt
-		$this->editable = getUser()->data->id != $this->data->owner && getUser()->data->access_level != 0;
+		$this->editable = getUser()->data->id == $this->data->owner || getUser()->data->access_level == 0;
 
 		//Im Fehlerfall wird das Skript abgebrochen und ein Fehler ausgegeben
 		if ($fail)
 			$this->throwError('$user has no access to the project');
-		if (getUser() === false)
+		if (getUser() === false && $this->data->access_level < 3)
 			$this->throwError('You aren`t logged in');
 	}
 

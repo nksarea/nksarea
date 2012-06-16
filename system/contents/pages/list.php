@@ -7,8 +7,6 @@ if ($template instanceof Template)
 		$projectTemplate = new Template(SYS_TEMPLATE_FOLDER.'html/list.xhtml');
 		$template->assign('#content', $projectTemplate);
 
-		$template->addJS('http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js');
-		$template->addJS('scripts/pageScripts.js');
 		$template->addCSS('styles/css/color-150.css');
 		
 		$projectTemplate->assign('name', $list->data->name);

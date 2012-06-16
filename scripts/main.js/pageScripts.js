@@ -1,4 +1,4 @@
-$(document).ready(function(){ 
+function initPage() { 
 	if($('[data-path="/"]').length == 1)
 		changeFolder('/');
 	
@@ -31,7 +31,9 @@ $(document).ready(function(){
 			i += 1;
 		});
 	},50);
-});
+}
+registerEvent('load', initPage);
+registerEvent('initialize', initPage);
 
 function submit(path){
 	var submit = new Object();
@@ -66,6 +68,15 @@ function submit(path){
 			post += '&'+i+'='+encodeURIComponent(submit[i]);
 
 	loadContent(path, post.substr(1));
+}
+
+function storeFile(e) {
+	var filename = e.target.responseText;
+	var d = document.createElement('div');
+	d.className = 'hidden';
+	d.dataset.input = 'addVersion';
+	d.appendChild(document.createTextNode(filename));
+	document.body.appendChild(d);
 }
 
 function changeFolder(path){

@@ -1,5 +1,6 @@
-<div class="title" data-input="title">%{name}%</div>
+<div class="title">%{name}%</div>
 <div class="box list-box">
+	<div class="button"><a href="javascript:;" onclick="submit('http://nksarea/changeUser')"><img src="styles/images/save.png" /></a></div>
 	<table>
 		<colgroup>
 			<col class="head-col"/>
@@ -25,26 +26,12 @@
 </div>
 
 <div class="box text-box">
-	<div class="title subtitle">Change Password</div>
-	<form action="user" method="post">
-		<div class="text">
-			Password:
-			<input type="text" name="password"/>
-			Repeat Password:
-			<input type="text" name="password"/>
-			<input type="submit" />
-			<div style="clear:both"></div>
-		</div>
-	</form>
-</div>
-
-<div class="box text-box">
 	<div class="title subtitle">Add Project</div>
 	<form action="editProject" method="post">
 		<div class="text">
 			Name:
 			<input type="text" name="name"/>
-			<div class="file-area">
+			<div class="file-area" data-fda-submit="/upload.php" data-fda-callback="storeFile" data-fda-name="new project version">
 				Drop Files to add Data
 			</div>
 			Access Level:
@@ -79,6 +66,20 @@
 				<option value="0">Project List</option>
 				<option value="0">Test List</option>
 			</select>
+			<input type="submit" />
+			<div style="clear:both"></div>
+		</div>
+	</form>
+</div>
+
+<div class="box text-box">
+	<div class="title subtitle">Change Password</div>
+	<form action="user" method="post">
+		<div class="text">
+			Password:
+			<input type="text" name="password"/>
+			Repeat Password:
+			<input type="text" name="password"/>
 			<input type="submit" />
 			<div style="clear:both"></div>
 		</div>

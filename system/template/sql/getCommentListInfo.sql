@@ -7,9 +7,16 @@ SELECT (
 	SELECT COUNT(*)
 	FROM `comments`
 	WHERE `%{type}%` = '%{id}%'
+		AND `deleted` IS NULL
 ) AS `length`, (
 	SELECT COUNT(*)
 	FROM `comments`
 	WHERE `%{type}%` = '%{id}%'
 		AND `parent` = 0
-) AS `threads`
+		AND `deleted` IS NULL
+) AS `threads`, (
+	SELECT `owner`
+	FROM `%{type}%s`
+	WHERE `id` = '%{id}%'
+	LIMIT 1
+) AS `owner`

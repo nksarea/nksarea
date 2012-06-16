@@ -97,7 +97,7 @@ class UserMethods extends base implements Methods
 			$this->throwError('$folder isn`t a folder');
 		if (!is_string($name))
 			$this->throwError('$name isn`t a string');
-		if ($access_level < 0 && $acces_level > 4)
+		if ($access_level < 0 && $access_level > 4)
 			$this->throwError('$access_level isn`t valid');
 		if (!is_string($description) && $description != NULL)
 			$this->throwError('$description isn`t a string nor NULL');

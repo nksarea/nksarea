@@ -8,11 +8,15 @@ function catchFDAs(e) {
 	if(!window.XMLHttpRequest || !window.File || !window.FormData)
 		throw "Browser doesn't support AJAX-Fileuploads.";
 
-	if(!e.target instanceof HTMLElement)
-		throw "Browser seems confused.";
+	if(!e.target)
+		throw "Browser seems confused";
+
+	// Bei Load-Event soll e.target = document sein
+	if(!e.target.querySelectorAll)
+		e.target = document;
 
 	// Alle Elemente, die über einen SubmitPath verfügen, sind FDAs
-	var fda = document.querySelectorAll('[data-fda-submit]');
+	var fda = e.target.querySelectorAll('[data-fda-submit]');
 	for(var i = 0; i < fda.length; i++) {
 		fda[i].registerEvent('dragover', hoverFDA);
 		fda[i].registerEvent('dragenter', hoverFDA);

@@ -9,4 +9,5 @@ FROM `comments` c
 	JOIN `users` a
 		ON c.`author` = a.`id`
 WHERE `%{type}%` = '%{id}%'
+	AND `deleted` IS NULL
 ORDER BY `id` ASC, `date` %{order}%

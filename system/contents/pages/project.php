@@ -1,6 +1,7 @@
 <?php
 
-include_once 'system/functions/createFilesList.fn.php';
+include_once('system/functions/createFilesList.fn.php');
+include_once('system/functions/createCommentList.fn.php');
 
 if ($template instanceof Template)
 {
@@ -51,8 +52,6 @@ if ($template instanceof Template)
 
 		$projectTemplate = new Template(SYS_TEMPLATE_FOLDER . 'html/project.xhtml');
 		$template->assign('#content', $projectTemplate);
-		$template->addJS('http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js');
-		$template->addJS('scripts/pageScripts.js');
 		$template->addCSS('styles/css/color-' . $project->color . '.css');
 
 		$projectTemplate->assign('name', $project->name);
@@ -82,6 +81,9 @@ if ($template instanceof Template)
 
 		$projectTemplate->assign('description', str_replace('{newline}', '<br />', $project->description));
 		createFilesList($project->viewContent(), $projectTemplate, '/', 'show');
+
+		$commentList = new CommentList(CommentList::TYPE_PROJECT, $_GET['pid']);
+		createCommentList($commentList->comments, $projectTemplate);
 	}
 	else
 	{

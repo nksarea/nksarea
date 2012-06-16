@@ -1,7 +1,7 @@
-<div class="title" data-input="title">%{name}%</div>
+<div class="title">%{name}%</div>
 <div class="box project-box">
-	<div class="button"><a href="javascript: submit('http://nksarea/project?pid=%{pid}%')"><img src="styles/images/save.png" /></a></div>
-	<div class="button"><a href="user?remove=%pid%&type=0"><img src="styles/images/delete.png" /></a></div>
+	<div class="button"><a href="javascript:;" onclick="submit('http://nksarea/changeProject?pid=%{pid}%')"><img src="styles/images/save.png" /></a></div>
+	<div class="button"><a href="/user?remove=%{pid}%&amp;type=0"><img src="styles/images/delete.png" /></a></div>
 	<div class="image"><img src="styles/icons/%{icon}%"/></div>
 	<table>
 		<colgroup>
@@ -44,24 +44,13 @@
 			Change Version:
 		</div>
 	</div>
-	<div class="message">
+	<div class="message" data-fda-submit="/upload.php" data-fda-callback="storeFile" data-fda-name="new project version">
 		Drop Files to add new Version
 	</div>
 </div>
 <div class="box comment-box">
-	<div class="button"><a href="javascript: $('.comment').click(function(){removeComment(this);})"><img src="styles/images/delete.png" /></a></div>
+	<div class="button"><a href="javascript:;" onclick="$('.comment').click(function(){removeComment(this);})"><img src="styles/images/delete.png" /></a></div>
 	<div class="title subtitle">Comments</div>
-	<div class="element-normal comment" data-id="1">
-		Readymade photo booth messenger bag, sustainable 3 wolf moon mustache fap lomo fanny pack scenester gluten-free brunch seitan. Mixtape photo booth trust fund, fixie mustache portland cosby sweater pitchfork scenester freegan hoodie.
-		<div class="footer">postet by <a>Lorze</a> at <a>10:00</a></div>
-	</div>
-	<div class="element-normal comment" data-id="2" data-reply="1">
-		fanny pack scenester gluten-free brunch seitan!!!!!!
-		<div class="footer">postet by <a>Lorze</a> at <a>10:00</a></div>
-	</div>
-	<div class="element-normal comment" data-id="3">
-		Echo park fanny pack four loko, PBR cliche portland lo-fi pitchfork craft beer shoreditch mlkshk dreamcatcher. Leggings hoodie salvia, seitan marfa keytar cardigan VHS four loko tattooed squid mlkshk mustache. Hoodie twee Austin high life jean shorts carles viral. Yr next level twee cred ethical, gentrify before they sold out vinyl mustache fap butcher four loko bicycle rights
-		<div class="footer">postet by <a>Lorze</a> at <a>10:00</a></div>
-	</div>
+	%{comments}%
 </div>
 <div class="hidden" data-input="removeComments"></div>

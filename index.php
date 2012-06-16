@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL^E_NOTICE);
+// TODO @Lorze diashow selber einfügen (code oO)
 
 // Konfiguration und Kernfunktionen laden
 include_once 'system/config.php';
@@ -17,7 +18,7 @@ $template = new LanguageTemplate(SYS_UI_TMPL_DIR);
 
 // Seite ausführen
 if(empty($_GET['page']))
-	$_GET['page'] = 'index';
+	$_GET['page'] = 'home';
 
 if(preg_match('/^[a-zA-Z]+$/', $_GET['page']))
 	if(is_file(SYS_CNT_DIR.$_GET['page'].'.php'))
@@ -38,6 +39,8 @@ if($template instanceof Template)
 		$template->addCSS('styles/css/elements.css');
 		$template->addCSS('styles/css/content.css');
 		$template->addCSS('styles/css/slideshow.css');
+		$template->addCSS('styles/css/info.css');
+		$template->addJS('http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js');
 		$template->addJS('scripts/main');
 		$template->addJS('scripts/slideshow');
 

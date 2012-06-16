@@ -19,6 +19,9 @@ class CommentList extends base {
 	/** Anzahl Root-Kommentare (Kommentare, die nicht Antwort auf anderen Kommentar sind) */
 	protected $threads;
 
+	/** Der Eigentümer des Kommentierten Objektes */
+	protected $owner;
+
 	/** Erstellt ein neues CommentList-Objekt.
 	 *
 	 * @param integer $objType Eine TYPE-Konstante, die angibt, von welchem Typ
@@ -57,6 +60,7 @@ class CommentList extends base {
 		if($result) {
 			$this->length = $result->dataObj->length;
 			$this->threads = $result->dataObj->threads;
+			$this->owner = $result->dataObj->owner;
 		}
 	}
 
@@ -105,5 +109,22 @@ class CommentList extends base {
 			} while($result->next());
 		}
 		return $comments;
+	}
+
+	/** Löscht die gewählten Kommentare
+	 *
+	 * @param array $commentIDs Die Kommentar IDs
+	 */
+	public function removeComments($commentIDs) {
+		// int-cast für alle IDs
+		foreach($commentIDs as &$id)
+			$id = (int)$id;
+
+		// Entferne die Kommentare
+		return getDB()->query('removeComments', array(
+			'type' => $this->type,
+			'id' => $this->id,
+			'remove' => implode(',', $commentIDs)
+		));
 	}
 }

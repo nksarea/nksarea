@@ -1,3 +1,4 @@
+var loadNoContent = false;
 /*
  * Lädt Inhalt nach.
  *
@@ -6,7 +7,6 @@
  * @param ct Content-Type Header, falls nicht gesetzt, aber POST Request:
  *						application/x-www-form-urlencoded
  * @author Cédric Neukom
- * @todo css/color-***.css entfernen
  */
 function loadContent(evt, post, ct) {
 	var e;
@@ -19,13 +19,18 @@ function loadContent(evt, post, ct) {
 		if(evt.type == 'load' && location.hash.length<=1)
 			return; // Falls Load und kein Hash gegeben: lade nichts neues
 
+		if(evt.type == 'hashchange' && loadNoContent) {
+			loadNoContent = false;
+			return; // Falls hashchangeEvent von loadContent ausgelöst wurde
+		}
+
 		// Hole Pfad aus location
 		e = '/'+location.hash.substr(1);
 
 	} else {
 		// Element aus Event extrahieren
 		if(evt instanceof Event)
-			e = evt.srcElement ? evt.srcElement : evt.target; // IE 8
+			e = evt.srcElement ? evt.srcElement : (evt.currentTarget ? evt.currentTarget : e.target); // IE 8
 		else
 			e = evt;
 	
@@ -38,6 +43,7 @@ function loadContent(evt, post, ct) {
 		if(typeof e != 'string' || !e.match(/^https?:/))
 			throw "No path specified";
 
+		loadNoContent = true;
 		location.hash = e.match(/^https?:\/\/[^/]+\/(.*)$/)[1];
 	}
 
@@ -61,6 +67,7 @@ function loadContent(evt, post, ct) {
 	// Antwort verarbeiten
 	switch(xhr.status) {
 		case 200: // OK
+			scrollBy(0, 0);
 			// color-Stylesheets sind nur je für ein Dokument gültig: entferne sie
 			var a;
 			while((a = document.querySelector('link[href^="styles/css/color-"]')))
@@ -115,11 +122,11 @@ function loadContent(evt, post, ct) {
 			break;
 
 		case 404: // Not Found
-			report("The requested page couldn't be found.", 1);
+			report("The requested page couldn't be found.", 4);
 			break;
 
 		case 403: // Forbidden
-			report("You don't have permission to access the requested page.", 1);
+			report("You don't have permission to access the requested page.", 4);
 			break;
 
 		case 201: // Created
@@ -139,7 +146,7 @@ function loadContent(evt, post, ct) {
 			break;
 
 		default:
-			report("An unknown technical error occurred.", 1);
+			report("An unknown technical error occurred.", 4);
 	}
 }
 

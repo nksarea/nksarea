@@ -1,4 +1,4 @@
-SELECT projects.name, projects.owner, projects.upload_time, projects.id, projects.color
+SELECT projects.name, users.name AS owner, projects.upload_time, projects.id, projects.color
 FROM `projects`
 JOIN `users` ON users.id = projects.owner
 WHERE 1 AND NOT (((projects.access_level = 0) AND

@@ -1,6 +1,8 @@
 <?php
 getUser('admin', 'test');
 
+include_once('system/functions/createCommentList.fn.php');
+
 if ($template instanceof Template)
 {
 	if (!empty($_GET['pid']))
@@ -12,8 +14,6 @@ if ($template instanceof Template)
 		$projectTemplate->assign('name', $project->name);
 		$projectTemplate->assign('icon', $project->pid . '.jpg');
 		$projectTemplate->assign('pid', $project->pid);
-		$template->addJS('http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js');
-		$template->addJS('scripts/pageScripts.js');
 		$template->addCSS('styles/css/color-' . $project->color . '.css');
 
 		$projectTemplate->assignFromNew('headTable', 'project/headRow.xhtml', array('key1' => 'Author:', 'value1' => $project->owner, 'key2' => 'Date:', 'value2' => $project->upload_time));
@@ -40,6 +40,9 @@ if ($template instanceof Template)
 		
 		$projectTemplate->assign('version', $project->version);
 		$projectTemplate->assign('description', $project->description);
+
+		$commentList = new CommentList(CommentList::TYPE_PROJECT, $_GET['pid']);
+		createCommentList($commentList->comments, $projectTemplate);
 	}
 	else
 	{

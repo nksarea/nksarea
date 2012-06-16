@@ -12,5 +12,5 @@ function abort(e) {
 		e.target.parentNode.xhr.abort();
 		reportFileBox(e.target.parentNode, "Aborted.", 2);
 	} else // Box schliessen
-		e.target.classList.add('close');
+		e.target.parentNode.classList.add('close');
 }

@@ -1,0 +1,74 @@
+#infoContainer {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	width: 200px;
+}
+
+#infoContainer .close {
+	display: none;
+}
+
+#infoContainer > div {
+	position: relative;
+	padding: 10px;
+	margin-top: 20px;
+	box-shadow: 0 0 10px rgba(60, 60, 60, 0.4);
+}
+
+#infoContainer > div > a.abort {
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 10px;
+	width: 10px;
+	cursor: pointer;
+	background: red;
+}
+
+#infoContainer .report2 {
+	background-color: #FFFFEF;
+}
+
+#infoContainer .report3 {
+	background-color: #FEA;
+}
+
+#infoContainer .report4 {
+	background-color: #FA8;
+}
+
+#infoContainer .report5 {
+	background-color: #320;
+	color: #DEF;
+}
+
+#infoContainer .file.complete {
+	background-color: #EFA;
+}
+
+#infoContainer .file.abort {
+	background-color: #F85;
+}
+
+#infoContainer .file label {
+	display: block;
+	border-bottom: 1px solid #aaa;
+	font-weight: bold;
+}
+
+#infoContainer .file p,
+#infoContainer .file progress {
+	margin: 2px;
+}
+
+#infoContainer .file p {
+	color: #2d4;
+}
+
+#infoContainer .file address {
+	color: #888;
+	font-size: 95%;
+	font-style: normal;
+}

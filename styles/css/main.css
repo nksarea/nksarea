@@ -5,10 +5,15 @@
   font-weight: 400;
   src: url('styles/fonts/baumans-regular.woff') format('woff');
 }
-
 .leftnav{
 	-webkit-transform: rotate(-90deg);
 	-webkit-transform-origin: top left;
+	-moz-transform: rotate(-90deg);
+	-moz-transform-origin: top left;
+	-o-transform: rotate(-90deg);
+	-o-transform-origin: top left;
+	transform: rotate(-90deg);
+	transform-origin: top left;
 	position: absolute;
 
 	text-align: right;

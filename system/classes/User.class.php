@@ -92,6 +92,7 @@ class User extends base {
 					'value' => $value,
 					'id' => $this->data->id
 				));
+				$this->data->$key = $value;
 				break;
 			case 'password':
 				getDB()->query('setUserValue', array(

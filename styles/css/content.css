@@ -147,7 +147,7 @@
 	-webkit-user-select: none;
 }
 .content .files-box .head{
-	height:	30px;
+	height:	32px;
 	padding: 0px 0px 0px 40px;
 
 	background-color: #333333;
@@ -164,6 +164,7 @@
 }
 .content .files-box .head .path img{
 	float: left;
+	margin: 1px;
 }
 .content .files-box .text-right{
 	float: right;

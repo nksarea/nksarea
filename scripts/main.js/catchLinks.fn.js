@@ -2,16 +2,18 @@
  * Fängt Links und ersetzt Ladevorgang der neuen Seite, falls interner Link
  *
  * @author Cédric Neukom
+ * @todo catch forms and submit them with loadContent
  */
 function catchLinks(e) {
 	if(!window.XMLHttpRequest)
-		throw "Browser doesn\t support AJAX.";
+		throw "Browser doesn't support AJAX.";
 
-	if(e.srcElement) // IE 8
-		e.target = e.srcElement;
+	if(!e.target)
+		throw "Browser seems confused";
 
-	if(!e.target instanceof HTMLElement)
-		throw "Browser seems confused.";
+	// Bei Load-Event soll e.target = document sein
+	if(!e.target.getElementsByTagName)
+		e.target = document;
 
 	var a = e.target.getElementsByTagName('a');
 	for(var i = 0; i < a.length; i++)

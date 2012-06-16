@@ -7,14 +7,13 @@ if ($template instanceof Template)
 		$projectTemplate = new Template(SYS_TEMPLATE_FOLDER . 'html/user.xhtml');
 		$template->assign('#content', $projectTemplate);
 
-		$template->addJS('http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js');
-		$template->addJS('scripts/pageScripts.js');
 		$template->addCSS('styles/css/color-150.css');
 
 		$projectTemplate->assign('name', getUser()->data->name);
 
 		$projectTemplate->assignFromNew('infoTable', 'project/headRow.xhtml', array('key1' => 'E-mail:', 'value1' => (string) getUser()->data->email, 'key2' => 'Name:', 'value2' => (string) getUser()->data->realname));
-		$projectTemplate->assignFromNew('infoTable', 'project/headRow.xhtml', array('key1' => 'Account:', 'value1' => (string) getUser()->data->access_level, 'key2' => 'Class:', 'value2' => (string) getUser()->data->class));
+		$accessLevel = array('Administrator', 'Teacher', 'Student');
+		$projectTemplate->assignFromNew('infoTable', 'project/headRow.xhtml', array('key1' => 'Account:', 'value1' => $accessLevel[getUser()->data->access_level], 'key2' => 'Class:', 'value2' => (string) getUser()->data->class));
 		$projectTemplate->assignFromNew('infoTable', 'project/headRow.xhtml', array('key1' => 'Registration:', 'value1' => (string) getUser()->data->registrated, 'key2' => 'Activity:', 'value2' => getUser()->data->last_activity));
 
 		$projects = getDB()->query('getUserProjects', array('id' => getUser()->data->id));
@@ -22,7 +21,7 @@ if ($template instanceof Template)
 		{
 			do
 			{
-				$projectTemplate->assignFromNew('projects', 'list/project.xhtml', array('name' => $projects->dataObj->name, 'owner' => $projects->dataObj->owner, 'date' => $projects->dataObj->upload_time, 'color' => $projects->dataObj->color, 'icon' => $projects->dataObj->id . '.jpg'));
+				$projectTemplate->assignFromNew('projects', 'list/project.xhtml', array('name' => $projects->dataObj->name, 'owner' => $projects->dataObj->owner, 'date' => $projects->dataObj->upload_time, 'color' => $projects->dataObj->color, 'icon' => $projects->dataObj->id . '.jpg', 'id' => $projects->dataObj->id));
 			}
 			while ($projects->next());
 		}

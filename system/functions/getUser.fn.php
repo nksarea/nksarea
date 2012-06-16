@@ -22,11 +22,11 @@ function getUser($username = null, $pwd = null) {
 		// Login versuchen, wenn Benutzername und Passwort gegeben sind und noch nicht eingeloggt
 		if(!$user->loggedin && $username && $pwd) 
 			$user->login($username, $pwd);
-
-		// Wenn Benutzer nicht eingeloggt
-		if(!$user->loggedin)
-			$user = false;
 	}
+
+	// Wenn Benutzer nicht (mehr) eingeloggt
+	if(!$user->loggedin)
+		$user = false;
 
 	return $user;
 }
