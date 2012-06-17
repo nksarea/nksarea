@@ -12,9 +12,29 @@ function loadContent(evt, post, ct) {
 	var e;
 	// Prüfe nicht, ob AJAX unterstützt wird, da bereits beim Initialisieren geprüft
 
-	// Falls Hashchange oder Load Event
-	if(evt instanceof Event &&
+	if(evt instanceof Event && evt.type == 'submit') {
+		// Falls Submit Event
+
+		// submitPath aus Formular lesen
+		if((e = evt.target.getAttribute('action'))[0] != '/')
+			return;
+
+		// Formulardaten serialisieren
+		var query = [];
+		for(var i = 0; i < evt.target.elements.length; i++)
+			query.push(encodeURIComponent(evt.target.elements[i].name)
+				 +'='+ encodeURIComponent(evt.target.elements[i].value));
+
+		// Formulardaten als POST oder GET mitsenden
+		if(evt.target.method.toLowerCase() == 'post')
+			// POST-Request mit standard Content-Type Header
+			post = query.join('&');
+		else
+			e += '?'+query.join('&');
+
+	} else if(evt instanceof Event &&
 			(evt.type == 'hashchange' || (evt.type == 'load'))) {
+		// Falls Hashchange oder Load Event
 
 		if(evt.type == 'load' && location.hash.length<=1)
 			return; // Falls Load und kein Hash gegeben: lade nichts neues
@@ -156,3 +176,6 @@ registerEvent('hashchange', loadContent);
 // registriere Load-Event: ermöglicht das verschicken von Links aus der Adresszeile
 //  und Neuladen der Seite
 registerEvent('load', loadContent);
+
+// registriere Submit-Event: ermöglicht das Abschicken von Formularen via AJAX
+registerEvent('submit', loadContent);
