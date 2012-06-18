@@ -50,7 +50,7 @@ function loadContent(evt, post, ct) {
 	} else {
 		// Element aus Event extrahieren
 		if(evt instanceof Event)
-			e = evt.srcElement ? evt.srcElement : (evt.currentTarget ? evt.currentTarget : e.target); // IE 8
+			e = evt.currentTarget ? evt.currentTarget : (evt.target ? evt.target : evt.srcElement); // IE 8
 		else
 			e = evt;
 	
