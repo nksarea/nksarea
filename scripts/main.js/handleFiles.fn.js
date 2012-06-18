@@ -13,15 +13,18 @@ function handleFiles(e) {
 		e.stopPropagation();
 	}
 
+	// currentTarget verwenden
+	var target = e.currentTarget ? e.currentTarget : e.target;
+
 	// Dateitypprüfung?
-	var mimeMatch = e.target.dataset.fdaMime;
+	var mimeMatch = target.dataset.fdaMime;
 	if(mimeMatch)
 		mimeMatch = new RegExp(mimeMatch);
 
 	if(e.dataTransfer.files)
 		for(var i = 0; i < e.dataTransfer.files.length; i++) {
 			var box = insertFileBox(
-						e.target.dataset.fdaName,
+						target.dataset.fdaName,
 						e.dataTransfer.files[i].name,
 						e.dataTransfer.files[i].size);
 
@@ -35,7 +38,7 @@ function handleFiles(e) {
 				var xhr = new XMLHttpRequest;
 				xhr.box = box; // Damit können auch CallbackFunktionen auf die Box zugreiffen
 				box.xhr = xhr; // Damit kann abort() über die Box auf den Request zugreiffen
-				xhr.open('POST', e.target.dataset.fdaSubmit, true);
+				xhr.open('POST', target.dataset.fdaSubmit, true);
 
 				xhr.onreadystatechange = function(e2) {
 					if(this.readyState == 4) {// Wenn der Upload abgeschlossen:
@@ -50,8 +53,8 @@ function handleFiles(e) {
 						}
 
 						// Callback ausfürhen
-						if(e.target.dataset.fdaCallback) {
-							var r = eval(e.target.dataset.fdaCallback);
+						if(target.dataset.fdaCallback) {
+							var r = eval(target.dataset.fdaCallback);
 							// Wenn Rückgabewert eine Funktion ist, führe diese aus
 							// damit wird folgende Schreibweise möglich:
 							//  <div data-fda-callback="myCallbackFunction" ...>
@@ -71,8 +74,8 @@ function handleFiles(e) {
 				}
 
 				// CallfirstFunktion ausführen, vor dem Absenden
-				if(e.target.dataset.fdaCallfirst) {
-					var r = eval(e.target.dataset.fdaCallfirst);
+				if(target.dataset.fdaCallfirst) {
+					var r = eval(target.dataset.fdaCallfirst);
 					// siehe callback
 					if(typeof r == 'function')
 						r(e, e.dataTransfer.files[i], xhr);

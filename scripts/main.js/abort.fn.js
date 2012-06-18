@@ -8,7 +8,7 @@ function abort(e) {
 			!e.target.parentNode.classList.contains('complete') &&
 			!e.target.parentNode.classList.contains('abort')) {
 		// Dateiupload abbrechen
-		e.target.classList.add('abort');
+		e.target.parentNode.classList.add('abort');
 		e.target.parentNode.xhr.abort();
 		reportFileBox(e.target.parentNode, "Aborted.", 2);
 	} else // Box schliessen
