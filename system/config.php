@@ -38,7 +38,7 @@ define('SYS_TEMPLATE_FOLDER', SYS_ROOT . 'system/template/');
 /** Pfad zum Templateordner														*/
 define('SYS_ICON_FOLDER', SYS_ROOT . 'styles/icons/');
 
-/** Pfad zum Templateordner														*/
+/** Pfad zur Diashow															*/
 define('SYS_DIASHOW_FOLDER', 'data/diashow/');
 
 /** Pfad zum Ordner mit den UserInterface Templates								*/

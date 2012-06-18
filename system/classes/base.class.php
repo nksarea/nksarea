@@ -8,13 +8,24 @@ class base
 	const TYPE_FILE = 2;
 	const TYPE_LIST = 3;
 
+	/**
+	 * Ist die Grundkomponente der Template Engine. Templates werden aus Dateien
+	 * im Template Ordener ausgelesen und mit Inhalt gefüllt
+	 *
+	 * @param file $template Template Datei
+	 * @param array input Array
+	 * @return string fertig ausgefülltes Template
+	 * @author Lorze Widmer
+	 */
 	public function template($template, $input)
 	{
+		//der Pfad der Datei wird ermittelt bla.sql => SYS_TEMPLATE_FOLDER/sql/bla.sql
 		$matches = array();
 		$extension = explode('.', $template);
 		$extension = $extension[count($extension) - 1] . '/';
 		$template = SYS_TEMPLATE_FOLDER . $extension . $template;
 
+		//Parameter werden überprüft
 		if (!is_array($input))
 			return $this->throwError('$input isn`t an array');
 		if (!isset($template))
@@ -22,6 +33,7 @@ class base
 		if (!is_file($template))
 			return $this->throwError('$template is no file', $template);
 
+		//Template wir ausgelesen
 		$templ = fopen($template, 'r');
 		$template = fread($templ, filesize($template));
 		fclose($templ);
@@ -61,6 +73,7 @@ class base
 			}
 		}
 
+		//Zwei Templates werden zusammengefügt
 		preg_match_all('/\%\|(.+)\|\%/', $template, $matches);
 		foreach ($matches[1] as $key => $value)
 		{
@@ -75,12 +88,19 @@ class base
 			$template = str_replace($matches[0], $match, $template);
 		}
 
+		//Ist das Template nicht ausgefüllt wird abgebrochen
 		if (strpos($template, '%{') || strpos($template, '%[') || strpos($template, '%|') || strpos($template, '%¦'))
 			return $this->throwError('Not every field in the template had been replaced', $template);
 
 		return $template;
 	}
-
+/**
+	 * Fehlerbehandlungs System, kann nach belieben erweitert werden
+	 *
+	 * @param string $text Error Text
+	 * @param mixed $var Variabel die mit ausgegeben werden soll
+	 * @author Lorze Widmer
+	 */
 	public function throwError($text, $var = NULL)
 	{
 		if (!is_string($text))
@@ -92,6 +112,12 @@ class base
 		exit;
 	}
 
+	/**
+	 * Fehlerbehandlungs System, kann nach belieben erweitert werden
+	 *
+	 * @param string $text Warnungs Text
+	 * @author Lorze Widmer
+	 */
 	public function throwWarning($text)
 	{
 		if (!isset($GLOBALS['warning']))

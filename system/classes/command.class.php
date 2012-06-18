@@ -17,19 +17,25 @@ class command extends base
 
 	public function __construct()
 	{
+		//Der Plugin Ordner wird geöffnet
 		$dir = opendir(SYS_PLUGIN_FOLDER);
 		while (($file = readdir($dir)) !== false)
 		{
+			//Alle plugin Dateien werden ausgelesen
 			if (!strpos($file, '.plugin.php'))
 				continue;
 
+			//plugin Dateien werden ausgelesen
 			$class = str_replace('.plugin.php', '', $file);
 			include_once(SYS_PLUGIN_FOLDER . $file);
 			$instance = new $class();
 
+			//Kompabilität wird überprüft
 			if (!$instance instanceof Plugin)
 				continue;
+			//Dem Plugin wird der Output der Command Class mitgegeben
 			$instance->output = &$this->output;
+			//Verfügbare Methoden werden ausgelesen für die spätere Überprüfung
 			foreach ($instance->methods as $value)
 				$pluginMethods[] = $class . '_' . $value;
 
@@ -40,6 +46,7 @@ class command extends base
 
 	public function execute($template, $input, $asynchron = false)
 	{
+		
 		$this->output = array();
 		$path = SYS_TMP . uniqid();
 		if (!mkdir($path))

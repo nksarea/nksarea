@@ -64,8 +64,8 @@ class dbc extends mysqli
 
 	/**
 	 * Alle Placeholder %{'name'}% werden durch die entsprechenden Daten aus $input ersetzt.
-	 * Alternativ werden auch this::input und this::template akzeptiert. Sind alle Placeholder
-	 * ersetzt worden wird der sql-Code ausgeführt und die Daten als dbcResult Object zurückgegeben.
+	 * Sind alle Placeholder ersetzt worden wird der sql-Code ausgeführt und die Daten als
+	 * dbcResult Object zurückgegeben.
 	 *
 	 * @param string $template name der Template
 	 * @param array $input Daten für die Placeholder im Tempalte: 'Placeholder Name'=>'Daten'
