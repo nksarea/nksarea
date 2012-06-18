@@ -70,15 +70,6 @@ function submit(path){
 	loadContent(path, post.substr(1));
 }
 
-function storeProjectFile(e) {
-	var filename = e.target.responseText;
-	var d = document.createElement('div');
-	d.className = 'hidden';
-	d.dataset.input = 'projectFile';
-	d.appendChild(document.createTextNode(filename));
-	document.body.appendChild(d);
-}
-
 function changeFolder(path){
 	var elementOld = $('.show[data-path]"]');
 	var elementNew = $('[data-path="' + path + '"]');

@@ -2,7 +2,7 @@
 <div class="box project-box">
 	<div class="button"><a href="javascript:;" onclick="submit('http://nksarea/changeProject?pid=%{pid}%')"><img src="styles/images/save.png" /></a></div>
 	<div class="button"><a href="/user?remove=%{pid}%&amp;type=0"><img src="styles/images/delete.png" /></a></div>
-	<div class="image"><img src="styles/icons/%{icon}%"/></div>
+	<div class="image" data-fda-submit="/upload.php" data-fda-callfirst="insertProjectIcon" data-fda-mime="image/(png|jpeg)" data-fda-callback="replaceProjectIcon" data-fda-name="new project icon"><img src="styles/icons/%{icon}%"/></div>
 	<table>
 		<colgroup>
 			<col class="head-col"/>
@@ -44,7 +44,7 @@
 			Change Version:
 		</div>
 	</div>
-	<div class="message" data-fda-submit="/upload.php" data-fda-callback="storeFile" data-fda-name="new project version">
+	<div class="message" data-fda-submit="/upload.php" data-fda-callback="storeProjectFile" data-fda-name="new project version">
 		Drop Files to add new Version
 	</div>
 </div>
