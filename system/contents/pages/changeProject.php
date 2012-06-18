@@ -20,7 +20,7 @@ if ($template instanceof Template)
 	if (!empty($_POST['description']) && strlen($_POST['description']) <= 2048)
 	{
 		$_POST['description'] = strip_tags($_POST['description']);
-		$_POST['description'] = str_replace("\n", '{newline}', $_POST['description']);
+		$_POST['description'] = str_replace("\n", '!newline!', $_POST['description']);
 		$project->description = $_POST['description'];
 	}
 	if (!empty($_POST['name']) && strlen($_POST['name']) <= 64)
