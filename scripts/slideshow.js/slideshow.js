@@ -137,7 +137,7 @@ function Slideshow(container, data, editMode) {
 			rm.registerEvent('click', removeSlide);
 
 			div.appendChild(rm);
-			div.registerEvent('mousedown', moveSlide);
+			//div.registerEvent('mousedown', moveSlide);
 		}
 	}
 		
@@ -175,8 +175,11 @@ function Slideshow(container, data, editMode) {
 	}
 
 	/*
+	 * Diese Funktionen wurden aufgrund Zeitmangels und zu kleiner Wichtigkeit
+	 * vorerst weg gelassen.
+	 *
 	 * Slide herumziehen
-	 */
+	 *
 	function moveSlide(e) {
 		if(!editMode)
 			throw "Not allowed";
@@ -189,7 +192,7 @@ function Slideshow(container, data, editMode) {
 
 	/*
 	 * TODO moveable
-	 */
+	 *
 	function changeOrder(e) {
 		if(movingSlide) {
 			if(e instanceof Event) {
@@ -208,7 +211,7 @@ function Slideshow(container, data, editMode) {
 
 	/*
 	 * Beginnt automatisches Wechseln der Slides, wenn Slide über controls gezogen
-	 */
+	 *
 	function startAutoChange(e) {
 		if(!autoChangeTimeout)
 			autoChangeTimeout = window.setInterval(changeSlide, 750, e.target.className.match(/\bleft\b/) ? 'left' : 'right');
@@ -216,11 +219,12 @@ function Slideshow(container, data, editMode) {
 
 	/*
 	 * Stoppt automatisches Wechseln der Slides
-	 */
+	 *
 	function stopAutoChange() {
 		if(autoChangeTimeout) {
 			window.clearInterval(autoChangeTimeout);
 			autoChangeTimeout = null;
 		}
 	}
+	*/
 }
