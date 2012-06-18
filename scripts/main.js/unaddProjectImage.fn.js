@@ -4,5 +4,6 @@
  * @author Cédric Neukom
  */
 function unaddProjectImage(e) {
-	console.log(e);
+	document.body.removeChild(e.target.inputElem);
+	e.target.parentNode.parentNode.removeChild(e.target.parentNode);
 }

@@ -13,6 +13,7 @@
 }
 .slideshow .slidesContainer .slide {
 	float: left;
+	position: relative;
 }
 .slideshow .slidesContainer .slide img{
 	background-image:url(../pictures/slideshow-control-left.png);
@@ -38,4 +39,22 @@
 	top:0;
 	right:0;
 	width: 60px;
+}
+.slideshow .slidesContainer .slide a {
+	position: absolute;
+	padding: 3px;
+	bottom: 10px;
+	text-align: center;
+	left: 0;
+	right: 20px;
+	background-color: rgba(150, 150, 150, .7);
+	-moz-transition: background .5s, color .5s;
+	-webkit-transition: background .5s, color .5s;
+	transition: background .5s, color .5s;
+	cursor: pointer;
+}
+
+.slideshow .slidesContainer .slide a:hover {
+	background: rgba(100, 100, 100, .9);
+	color: #fff !important;
 }
