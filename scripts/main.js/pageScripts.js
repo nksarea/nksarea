@@ -17,6 +17,10 @@ function initPage() {
 		if($('.result', this).length == 0)
 			$(this).remove();
 	});
+	$('.comment-box').each(function(){
+		if($('.comment', this).length == 0)
+			$(this).remove();
+	});
 	
 	setTimeout(function() {
 		var i = 0;
