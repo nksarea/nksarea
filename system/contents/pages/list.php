@@ -1,4 +1,7 @@
 <?php
+include(SYS_ERR_DIR.'404.php');
+// Noch nicht implementiert
+/*
 if ($template instanceof Template)
 {
 	if (!empty($_GET['lid']))
@@ -31,4 +34,4 @@ if ($template instanceof Template)
 		//@TODO: Add error handling;
 	}
 }
-?>
+?>*/
