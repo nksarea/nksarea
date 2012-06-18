@@ -90,8 +90,10 @@ class CommentList extends base {
 			'order' => $reverseOrder?'DESC':'ASC'
 		));
 
-		if(!$result)
+		if($result === false)
 			return $this->throwError('A technical error occurred. No comments could be fetched.');
+		else if($result === NULL)
+			return array();
 
 		else { // Kommentare strukturieren
 			$byID = array();

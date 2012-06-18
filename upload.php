@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL^E_NOTICE);
 /*
  * Nimmt hochgeladene Datei, unter der Bedingung, dass sie von einem eingeloggten
  * Benutzer hochgeladen wurde, entgegen und gibt ihren temporären Dateinamen aus.
