@@ -12,12 +12,12 @@ function createFilesList($files, $template, $path, $class = 'hidden')
 		return;
 	}
 	
-	$content->assign('height', count($files) * 28 . 'px');
+	$content->assign('height', count($files) * 29 . 'px');
 	foreach ($files as $key => $value)
 	{
 		if(is_array($value))
 		{
-			$content->assignFromNew('content', 'project/filesRowDir.xhtml', array('name' => $key, 'date' => '20.12.2012', 'link' => $path . $key . '/'));
+			$content->assignFromNew('content', 'project/filesRowDir.xhtml', array('name' => (string)$key, 'date' => '20.12.2012', 'link' => $path . $key . '/'));
 			createFilesList($value, $template, $path . $key . '/');
 			continue;
 		}

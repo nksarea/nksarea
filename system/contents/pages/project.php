@@ -13,6 +13,7 @@ if ($template instanceof Template)
 		$template->addCSS('styles/css/color-' . $project->color . '.css');
 
 		$projectTemplate->assign('name', $project->name);
+		$projectTemplate->assign('pid', $project->pid);
 		$projectTemplate->assign('icon', $project->pid . '.jpg');
 
 		$projectTemplate->assignFromNew('infoTable', 'project/headRow.xhtml', array('key1' => 'Author:', 'value1' => $project->owner, 'key2' => 'Date:', 'value2' => $project->upload_time));
@@ -37,7 +38,8 @@ if ($template instanceof Template)
 		for ($i = count($keys) / 2; $i <= 3; $i++)
 			$projectTemplate->assignFromNew('infoTable', 'project/headRow.xhtml', array('key1' => '', 'value1' => '', 'key2' => '', 'value2' => ''));
 
-		$projectTemplate->assign('description', str_replace('{newline}', '<br />', $project->description));
+//		$projectTemplate->assign('description', str_replace('!newline!', '<br />', $project->description));
+		$projectTemplate->assign('description', $project->description);
 		createFilesList($project->viewContent(), $projectTemplate, '/', 'show');
 
 		$commentList = new CommentList(CommentList::TYPE_PROJECT, $_GET['pid']);

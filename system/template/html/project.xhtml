@@ -1,6 +1,6 @@
 <div class="title">%{name}%</div>
 <div class="box project-box">
-	<div class="button"><a href="/editProject?pid=1"><img src="styles/images/delete.png" /></a></div>
+	<div class="button"><a href="/editProject?pid=%{pid}%"><img src="styles/images/delete.png" /></a></div>
 	<div class="image"><img src="styles/icons/%{icon}%"/></div>
 	<table>
 		<colgroup>
@@ -36,4 +36,11 @@
 <div class="box comment-box">
 	<div class="title subtitle">Comments</div>
 	%{comments}%
+	<div class="element-normal comment">
+		<form action="/submitComment?pid=%{pid}%" method="post">
+			<input type="text"/>
+			<input type="submit"/>
+		</form>
+		<div style="clear:both;"></div>
+	</div>
 </div>
