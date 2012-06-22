@@ -7,6 +7,7 @@
  * code (JS).
  *
  * @author Cédric Neukom (unabhängig entwickelt; angepasst)
+ * @todo report() to assign reportings (e.g. authentication failed)
  */
 class Template extends base {
 

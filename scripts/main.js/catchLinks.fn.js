@@ -2,7 +2,6 @@
  * Fängt Links und ersetzt Ladevorgang der neuen Seite, falls interner Link
  *
  * @author Cédric Neukom
- * @todo catch forms and submit them with loadContent
  */
 function catchLinks(e) {
 	if(!window.XMLHttpRequest)
